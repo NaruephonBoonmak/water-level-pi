@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ระบบควบคุมระดับน้ำด้วย PI · Arduino Mega 2560 + MATLAB/Simulink</title>
+<meta name="description" content="โครงงานระบบควบคุมระดับน้ำด้วยตัวควบคุม PI บน Arduino Mega 2560 พัฒนาด้วย MATLAB/Simulink ตาม V-Model: MIL, SIL, PIL และการทดสอบกับถังจริง">
+<meta property="og:title" content="ระบบควบคุมระดับน้ำด้วย PI">
+<meta property="og:description" content="Mini project · Arduino Mega 2560 + MATLAB/Simulink · MIL → SIL → PIL → ทดสอบถังจริง">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#1B2440">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='14' y='6' width='36' height='52' rx='6' fill='%23fff' stroke='%231B2440' stroke-width='4'/%3E%3Crect x='16' y='30' width='32' height='26' fill='%232B4FA8'/%3E%3Cline x1='10' y1='30' x2='54' y2='30' stroke='%23E8692E' stroke-width='4'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/css/site.css">
+<script src="assets/js/config.js" defer></script>
+<script src="assets/js/site.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#problem">ข้ามไปยังเนื้อหา</a>
+
+<!-- ============================== เมนู ============================== -->
+<header class="topnav">
+  <div class="in">
+    <a class="brand" href="#top">ระดับน้ำ <span>PI</span></a>
+    <button class="menu-btn" id="menuBtn" type="button" aria-controls="navlinks" aria-expanded="false" aria-label="เปิดเมนู">☰</button>
+    <ul class="navlinks" id="navlinks">
+      <li><a href="#problem">โจทย์</a></li>
+      <li><a href="#hardware">ฮาร์ดแวร์</a></li>
+      <li><a href="#model">แบบจำลอง</a></li>
+      <li><a href="#pi">ออกแบบ PI</a></li>
+      <li><a href="#tests">ผลทดสอบ</a></li>
+      <li><a href="#standalone">Standalone</a></li>
+      <li><a href="#summary">สรุป</a></li>
+      <li><a href="#team">ทีมและแผนงาน</a></li>
+    </ul>
+  </div>
+</header>
+
+<main id="top">
+<!-- ============================== Hero ============================== -->
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <div class="bar"></div>
+      <div class="eyebrow">CONTROL SYSTEM · MINI PROJECT</div>
+      <h1>ระบบควบคุมระดับน้ำ<br>ด้วย PI</h1>
+      <div class="subt">Arduino Mega 2560 + MATLAB/Simulink</div>
+      <div class="chips"><span class="chip sim">MIL</span><span class="chip sim">SIL</span><span class="chip pil">PIL · บอร์ด Mega</span><span class="chip hw">ทดสอบถังจริง</span><span class="chip pending">Standalone</span></div>
+      <div class="course">รายวิชา Control System Analysis and Design<br>พัฒนาตาม V-Model · ใช้ภาพและผลจากชุดทดลองจริง</div>
+      <div class="cta"><a class="btn" href="#problem">เริ่มอ่าน ↓</a><a class="btn ghost" href="#video">ดูวิดีโอสาธิต</a></div>
+    </div>
+    <div class="art"><svg class="cover-art" viewBox="0 0 640 920" aria-hidden="true">
+    <defs>
+      <clipPath id="coverTank"><rect x="120" y="40" width="360" height="820" rx="30"/></clipPath>
+      <linearGradient id="coverWater" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#2B4FA8" stop-opacity=".16"/>
+        <stop offset="1" stop-color="#2B4FA8" stop-opacity=".30"/>
+      </linearGradient>
+    </defs>
+    <!-- วงคลื่นจาง ๆ ด้านหลัง -->
+    <g fill="none" stroke="#2B4FA8" stroke-opacity=".06" stroke-width="2">
+      <circle cx="300" cy="430" r="250"/><circle cx="300" cy="430" r="330"/><circle cx="300" cy="430" r="410"/>
+    </g>
+    <g clip-path="url(#coverTank)">
+      <rect x="120" y="40" width="360" height="820" fill="#FFFFFF" fill-opacity=".55"/>
+      <rect x="120" y="430" width="360" height="430" fill="url(#coverWater)"/>
+      <path class="cw cw1" d="M-60 430 q45 -16 90 0 t90 0 t90 0 t90 0 t90 0 t90 0 t90 0 t90 0 t90 0 V900 H-60 Z" fill="#2B4FA8" fill-opacity=".16"/>
+      <path class="cw cw2" d="M-60 452 q45 12 90 0 t90 0 t90 0 t90 0 t90 0 t90 0 t90 0 t90 0 t90 0 V900 H-60 Z" fill="#2B4FA8" fill-opacity=".10"/>
+      <path class="cw cw3" d="M-60 520 q45 -10 90 0 t90 0 t90 0 t90 0 t90 0 t90 0 t90 0 t90 0 t90 0" fill="none" stroke="#FFFFFF" stroke-opacity=".55" stroke-width="3"/>
+      <path class="cw cw2" d="M-60 600 q45 8 90 0 t90 0 t90 0 t90 0 t90 0 t90 0 t90 0 t90 0 t90 0" fill="none" stroke="#FFFFFF" stroke-opacity=".40" stroke-width="2.5"/>
+    </g>
+    <rect x="120" y="40" width="360" height="820" rx="30" fill="none" stroke="#B9C6E0" stroke-width="3"/>
+    <!-- เส้นระดับเป้าหมาย (ส้ม) + สเกลบาง ๆ -->
+    <line x1="96" y1="424" x2="504" y2="424" stroke="#E8692E" stroke-width="4" stroke-dasharray="16 11" stroke-linecap="round"/>
+    <circle cx="96" cy="424" r="7" fill="#E8692E"/>
+    <g stroke="#9AA3B5" stroke-width="3" stroke-linecap="round">
+      <line x1="530" y1="200" x2="530" y2="760"/>
+      <line x1="530" y1="200" x2="556" y2="200"/><line x1="530" y1="312" x2="548" y2="312"/><line x1="530" y1="424" x2="556" y2="424"/>
+      <line x1="530" y1="536" x2="548" y2="536"/><line x1="530" y1="648" x2="556" y2="648"/><line x1="530" y1="760" x2="548" y2="760"/>
+    </g>
+    <!-- หยดน้ำ/ท่อเติมด้านบน -->
+    <path d="M300 0 V70" stroke="#2B4FA8" stroke-opacity=".35" stroke-width="10" stroke-linecap="round"/>
+    <circle class="cover-drop" cx="300" cy="110" r="9" fill="#2B4FA8" fill-opacity=".45"/>
+  </svg></div>
+  </div>
+</section>
+
+<!-- ============================== สารบัญ ============================== -->
+<section class="sec" aria-label="หัวข้อนำเสนอ">
+  <div class="wrap">
+    <div class="sec-head"><div class="kicker">Outline</div><h2>หัวข้อนำเสนอ</h2><p class="lead">สีฟ้าแทนงานแบบจำลองและผลจำลอง สีส้มแทนฮาร์ดแวร์และถังจริง ใช้หลักเดียวกันทั้งเว็บ</p></div>
+    <nav class="toc" aria-label="สารบัญ">
+      <a class="g-nv" href="#problem"><div class="n">01</div><div class="h">โจทย์และ Requirement</div><div class="s">ช่วง SP 100–300 mm · R1–R8 · V-Model</div></a>
+      <a class="g-hw" href="#hardware"><div class="n">02</div><div class="h">ฮาร์ดแวร์และชุดทดลอง</div><div class="s">ถัง เซนเซอร์ ปั๊ม กล่องควบคุม</div></a>
+      <a class="g-sim" href="#model"><div class="n">03</div><div class="h">แบบจำลองและพารามิเตอร์</div><div class="s">LAB1–LAB5 · C<sub>o</sub> · K<sub>u</sub> · K<sub>h</sub> · Q<sub>0</sub> · lsqnonlin</div></a>
+      <a class="g-sim" href="#pi"><div class="n">04</div><div class="h">ออกแบบและจูน PI</div><div class="s">SIMC ตั้งต้น → Grid search บนแบบจำลอง</div></a>
+      <a class="g-hw" href="#tests"><div class="n">05</div><div class="h">ทดสอบตาม V-Model</div><div class="s">MIL → SIL → PIL → ทดสอบถังจริง → Standalone</div></a>
+      <a class="g-nv" href="#summary"><div class="n">06</div><div class="h">สรุป ข้อจำกัด และทีม</div><div class="s">Traceability · งานถัดไป · ทีมและแผนงาน</div></a>
+    </nav>
+  </div>
+</section>
+
+<!-- ============================== 01 โจทย์ ============================== -->
+<section class="sec" id="problem">
+  <div class="wrap">
+    <div class="sec-head"><div class="kicker">01 · Problem</div><h2>โจทย์: ควบคุมระดับน้ำ h ให้เท่ากับ SP ในช่วง 100–300 mm</h2></div>
+    <div class="grid g-side">
+      <div class="grid" style="gap:16px">
+        <div class="card accent"><h3>เลือก SP ทีละ 25 mm</h3><p>กด SP+ / SP− แล้วกด Start เพื่อยืนยัน SP</p></div>
+        <div class="card accent-o"><h3>ปั๊มเติมน้ำได้ทิศทางเดียว</h3><p>เมื่อ SP ลดลงและ PI ≤ 0 คำสั่ง PWM = 0 → ระดับเริ่มลดลงจากน้ำไหลออกทางท่อ ID 4 mm เมื่อระดับเข้าใกล้ SP ใหม่ PI กลับมาสั่งปั๊มอีกครั้ง</p><p class="small muted">Actuator เติมน้ำได้ทางเดียว → ผลตอบสนองขาเพิ่มระดับกับขาลดระดับไม่สมมาตร</p></div>
+        <div class="card accent"><h3>ประมวลผลบน Arduino Mega</h3><p>PC เชื่อมต่อผ่าน External Mode เพื่อแสดงผลและบันทึกข้อมูลเท่านั้น</p></div>
+        <p class="small muted"><b><i>d</i></b> = ระยะที่เซนเซอร์วัดจากใต้ฝาถึงผิวน้ำ · <b><i>h</i></b> = ระดับน้ำจากก้นถัง (ได้จาก <i>d</i> ผ่าน Lookup)</p>
+      </div>
+      <figure>
+        <div class="card tank-sim" id="tankSim" style="padding:14px">
+          <svg viewBox="0 0 860 700" aria-label="แอนิเมชันแนวคิด: ปั๊มเติมน้ำเข้าถัง ระดับน้ำเพิ่มถึง SP เซนเซอร์วัด PV และน้ำไหลออกทางท่อ">
+        <defs>
+          <clipPath id="tkInner"><rect x="332" y="110" width="256" height="520"/></clipPath>
+          <marker id="tkArrB" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#2B4FA8"/></marker>
+          <marker id="tkArrO" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1B2440"/></marker>
+        </defs>
+        <text x="0" y="24" class="tk-tag">ภาพแนวคิด · ไม่ใช่สเกลจริง</text>
+
+        <!-- ช่วง SP 100–300 mm (แถบข้างถัง) -->
+        <rect x="600" y="318" width="12" height="208" rx="3" fill="#E8692E" fill-opacity=".28"/>
+        <line x1="596" y1="318" x2="616" y2="318" stroke="#E8692E" stroke-width="3"/><line x1="596" y1="526" x2="616" y2="526" stroke="#E8692E" stroke-width="3"/>
+        <text x="626" y="326" class="tk-sm">300 mm</text><text x="626" y="534" class="tk-sm">100 mm</text>
+        <text x="626" y="418" class="tk-md" style="fill:#B9481A">ช่วง SP</text><text x="626" y="448" class="tk-sm">100–300 mm</text>
+
+        <!-- น้ำในถัง -->
+        <g clip-path="url(#tkInner)">
+          <rect id="tkWater" x="332" y="422" width="256" height="208" fill="#CFDDF5"/>
+          <path id="tkSurf" d="" fill="#CFDDF5" stroke="#2B4FA8" stroke-width="3"/>
+        </g>
+        <!-- ถัง + ฝา -->
+        <path d="M330 110 V632 H590 V110" fill="none" stroke="#1B2440" stroke-width="5" stroke-linejoin="round"/>
+        <line x1="318" y1="110" x2="602" y2="110" stroke="#1B2440" stroke-width="6" stroke-linecap="round"/>
+
+        <!-- SP -->
+        <line x1="320" y1="422" x2="600" y2="422" stroke="#E8692E" stroke-width="4" stroke-dasharray="14 10"/>
+        <text x="306" y="420" text-anchor="end" class="tk-lg" style="fill:#B9481A">SP</text>
+        <text x="306" y="450" text-anchor="end" class="tk-sm">200 mm</text>
+
+        <!-- เซนเซอร์ + ลำแสง/พัลส์ -->
+        <text x="460" y="62" text-anchor="middle" class="tk-md"><tspan font-weight="600">เซนเซอร์</tspan> VL53L0X</text>
+        <rect x="428" y="84" width="64" height="26" rx="5" fill="#1B2440"/>
+        <circle cx="460" cy="104" r="5" fill="#E8692E"/>
+        <line id="tkBeam" x1="460" y1="112" x2="460" y2="420" stroke="#E8692E" stroke-width="3" stroke-dasharray="4 8" stroke-opacity=".7"/>
+        <g id="tkPulses" fill="none" stroke="#E8692E" stroke-width="4" stroke-linecap="round">
+          <path d="M-20 0 Q0 12 20 0"/><path d="M-20 0 Q0 12 20 0"/><path d="M-20 0 Q0 12 20 0"/>
+        </g>
+        <text id="tkD" x="474" y="270" class="tk-md" font-style="italic">d</text>
+
+        <!-- PV readout -->
+        <path d="M492 97 H632" stroke="#1B2440" stroke-width="2.5" stroke-dasharray="5 5"/>
+        <rect x="632" y="58" width="222" height="104" rx="14" fill="#FFFFFF" stroke="#2B4FA8" stroke-width="3"/>
+        <text x="652" y="98" class="tk-lg" style="fill:#2B4FA8">PV</text>
+        <text id="tkPV" x="836" y="142" text-anchor="end" class="tk-xl">100.0 mm</text>
+
+        <!-- ปั๊ม + Qin -->
+        <text x="130" y="520" text-anchor="middle" class="tk-lg">ปั๊ม</text>
+        <circle cx="130" cy="585" r="46" fill="#FFFFFF" stroke="#1B2440" stroke-width="5"/>
+        <g id="tkImp" transform="translate(130 585)"><g fill="#2B4FA8"><path d="M0 0 L-6 -32 L6 -32 Z"/><path d="M0 0 L-6 -32 L6 -32 Z" transform="rotate(120)"/><path d="M0 0 L-6 -32 L6 -32 Z" transform="rotate(240)"/></g><circle r="8" fill="#1B2440"/></g>
+        <rect x="80" y="646" width="100" height="14" rx="7" fill="#E3E8F1"/>
+        <rect id="tkPow" x="80" y="646" width="0" height="14" rx="7" fill="#2B4FA8"/>
+        <text x="130" y="690" text-anchor="middle" class="tk-sm">กำลังปั๊ม</text>
+        <line x1="176" y1="585" x2="330" y2="585" stroke="#DCE5F5" stroke-width="20" stroke-linecap="round"/>
+        <line id="tkQin" x1="180" y1="585" x2="322" y2="585" stroke="#2B4FA8" stroke-width="7" stroke-dasharray="12 14" stroke-linecap="round" marker-end="url(#tkArrB)"/>
+        <text x="252" y="560" text-anchor="middle" class="tk-lg" style="fill:#2B4FA8">Q<tspan baseline-shift="sub" font-size="22">in</tspan></text>
+
+        <!-- ท่อน้ำออก + Qout -->
+        <path d="M590 612 H724 V690" fill="none" stroke="#DCE5F5" stroke-width="20" stroke-linejoin="round"/>
+        <path id="tkQout" d="M596 612 H724 V684" fill="none" stroke="#1B2440" stroke-width="7" stroke-dasharray="12 14" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#tkArrO)"/>
+        <text x="758" y="620" class="tk-lg">Q<tspan baseline-shift="sub" font-size="22">out</tspan></text>
+        <text x="758" y="668" class="tk-sm">ไหลออกเอง</text>
+
+        <!-- สถานะสมดุล -->
+        <g id="tkBadge" opacity="0"><rect x="362" y="650" width="196" height="46" rx="23" fill="#E8692E"/><text x="460" y="682" text-anchor="middle" class="tk-md" style="fill:#fff;font-weight:600">Qin ≈ Qout</text></g>
+      </svg>
+          <div class="tk-status"><span class="tk-dots" id="tkDots"><i></i><i></i><i></i><i></i><i></i></span><span id="tkText">ปั๊มเริ่มทำงาน</span></div>
+        </div>
+        <figcaption>แอนิเมชันแนวคิด เล่นวนเมื่อเลื่อนมาถึง · ไม่ใช่สเกลจริงและไม่ใช่ข้อมูลทดลอง (SP 200 mm เป็นค่าตัวอย่างในช่วง 100–300 mm)</figcaption>
+      </figure>
+    </div>
+
+    <div class="sub">
+      <h3>ข้อกำหนดเชิงตัวเลข R1–R8 และนิยามที่ใช้ตัดสิน</h3>
+      <div class="grid g-side">
+        <div class="tscroll" tabindex="0" role="region" aria-label="ตาราง Requirement">
+          <table class="t">
+            <thead><tr><th>ID</th><th>ข้อกำหนด</th><th>เกณฑ์</th><th>วิธีทดสอบ</th></tr></thead>
+            <tbody>
+            <tr><td class="id">R1</td><td>ช่วง Setpoint</td><td>100–300 mm ทีละ 25 mm</td><td>MIL · ถังจริง</td></tr>
+            <tr><td class="id">R2</td><td>Overshoot / Undershoot</td><td>≤ 10% ของ SP ปลายทาง</td><td>MIL · ถังจริง</td></tr>
+            <tr><td class="id">R3</td><td>Settling time (t<sub>s</sub>)</td><td><span class="tex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>t</mi><mi>s</mi></msub><mo>≤</mo><mn>250</mn><mtext>&nbsp;</mtext><mi mathvariant="normal">s</mi></mrow><annotation encoding="application/x-tex">t_s \le 250\ \mathrm{s}</annotation></semantics></math></span> ในแถบ ±5%</td><td>MIL · ถังจริง</td></tr>
+            <tr><td class="id">R4</td><td>Steady-state error (e<sub>ss</sub>)</td><td>≤ 5% ของ SP ปลายทาง</td><td>MIL · ถังจริง (สเกล)</td></tr>
+            <tr><td class="id">R5</td><td>ผลของโค้ดตรงกับโมเดล</td><td>SIL ≤ 1×10<sup>−6</sup> · PIL ≤ 0.5 count <span class="chip note">PIL: เสนอหลังได้ผล</span></td><td>SIL · PIL</td></tr>
+            <tr><td class="id">R6</td><td>Execution time</td><td>ControlCore &lt; Sample time 200 ms</td><td>PIL</td></tr>
+            <tr><td class="id">R7</td><td>Safety interlock</td><td>PWM = 0 เมื่อ Sensor fault หรือระดับก่อน Filter ≥ 310 mm</td><td>ถังจริง · Standalone</td></tr>
+            <tr><td class="id">R8</td><td>Standalone</td><td>ทำงานได้โดยไม่เชื่อมต่อ PC</td><td>Standalone</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card accent">
+          <h4>นิยามที่ใช้ตัดสิน</h4>
+          <ul class="pts small">
+            <li><b>Overshoot</b> <span class="tex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>=</mo><mstyle displaystyle="true" scriptlevel="0"><mfrac><mrow><msub><mrow><mi mathvariant="normal">P</mi><mi mathvariant="normal">V</mi></mrow><mi>max</mi><mo>⁡</mo></msub><mo>−</mo><mrow><mi mathvariant="normal">S</mi><mi mathvariant="normal">P</mi></mrow></mrow><mrow><mi mathvariant="normal">S</mi><mi mathvariant="normal">P</mi></mrow></mfrac></mstyle></mrow><annotation encoding="application/x-tex">=\dfrac{\mathrm{PV}_{\max}-\mathrm{SP}}{\mathrm{SP}}</annotation></semantics></math></span><br><b>Undershoot</b> <span class="tex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>=</mo><mstyle displaystyle="true" scriptlevel="0"><mfrac><mrow><mrow><mi mathvariant="normal">S</mi><mi mathvariant="normal">P</mi></mrow><mo>−</mo><msub><mrow><mi mathvariant="normal">P</mi><mi mathvariant="normal">V</mi></mrow><mi>min</mi><mo>⁡</mo></msub></mrow><mrow><mi mathvariant="normal">S</mi><mi mathvariant="normal">P</mi></mrow></mfrac></mstyle></mrow><annotation encoding="application/x-tex">=\dfrac{\mathrm{SP}-\mathrm{PV}_{\min}}{\mathrm{SP}}</annotation></semantics></math></span><br>โดย SP = SP ปลายทาง</li>
+            <li><b>PV</b> = ค่าเซนเซอร์หลัง Filter · ค่าสเกลรายงานแยก</li>
+            <li><b>t<sub>s</sub></b>: แถบ ±5% ของ SP ปลายทาง เริ่มนับเมื่อ Apply SP ใหม่</li>
+            <li><b>e<sub>ss</sub> ถังจริง</b> = ค่าที่อ่านจากสเกลช่วงท้ายของแต่ละระดับ − SP (ไม่ได้จับเวลาคู่กับ PV)</li>
+          </ul>
+          <p class="xs muted" style="margin-top:10px">เกณฑ์ t<sub>s</sub> เดิมกำหนด 200 s และปรับเป็น 250 s หลังทดสอบถังจริง (ดูหัวข้อสรุป) · PIL tolerance 0.5 count เสนอหลังได้ผลทดสอบ</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="sub">
+      <h3>V-Model: แต่ละขั้นออกแบบทวนสอบด้วยอะไร</h3>
+      <div class="card"><div class="diagram v"><svg class="vmodel" viewBox="0 0 1728 690" aria-label="แผนภาพ V-Model เปิดทีละขั้น">
+      <defs><marker id="ah6" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#59627A"/></marker></defs>
+      <!-- พื้นหลังรูปตัว V (แสดงตลอด) -->
+      <path d="M190 72 L670 552 L1058 552 L1538 72" fill="none" stroke="#E3E8F1" stroke-width="56" stroke-linejoin="round" stroke-linecap="round"/>
+      <text x="40" y="676" class="t-s">ฝั่งออกแบบ (ซ้าย)  ·  ฝั่งทวนสอบ (ขวา)  ·  ①–⑤ = ลำดับการทดสอบจริง</text>
+
+      <!-- 1 · Requirement -->
+      <g class="vstep" data-frag="1">
+        <rect x="20" y="22" width="340" height="100" rx="12" class="bx"/><text x="40" y="64" class="t-h">Requirement</text><text x="40" y="100" class="t-s">R1–R8</text>
+      </g>
+      <!-- 2 · Plant model -->
+      <g class="vstep" data-frag="2">
+        <line class="conn" pathLength="1" x1="300" y1="124" x2="300" y2="170"/><polygon class="ah" points="292,168 308,168 300,180"/>
+        <rect x="180" y="182" width="340" height="100" rx="12" class="bx"/><text x="200" y="224" class="t-h">Plant model</text><text x="200" y="260" class="t-s">Fit จาก LAB2 · lsqnonlin</text>
+      </g>
+      <!-- 3 · ออกแบบ PI -->
+      <g class="vstep" data-frag="3">
+        <line class="conn" pathLength="1" x1="460" y1="284" x2="460" y2="330"/><polygon class="ah" points="452,328 468,328 460,340"/>
+        <rect x="340" y="342" width="340" height="100" rx="12" class="bx"/><text x="360" y="384" class="t-h">ออกแบบ PI</text><text x="360" y="420" class="t-s">SIMC ตั้งต้น → Grid search</text>
+      </g>
+      <!-- 4 · สร้างโค้ด C -->
+      <g class="vstep" data-frag="4">
+        <line class="conn" pathLength="1" x1="620" y1="444" x2="620" y2="490"/><polygon class="ah" points="612,488 628,488 620,500"/>
+        <rect x="500" y="502" width="340" height="100" rx="12" class="bx"/><text x="520" y="544" class="t-h">สร้างโค้ด C</text><text x="520" y="580" class="t-s">Simulink · ert.tlc</text>
+      </g>
+      <!-- 5 · MIL -->
+      <g class="vstep" data-frag="5">
+        <line class="ln-d" x1="680" y1="392" x2="724" y2="392" marker-end="url(#ah6)"/>
+        <line class="conn" pathLength="1" x1="790" y1="500" x2="790" y2="456"/><polygon class="ah" points="782,458 798,458 790,446"/>
+        <rect x="728" y="342" width="276" height="100" rx="12" class="bx-s"/><text x="748" y="384" class="t-h">① MIL</text><text x="748" y="420" class="t-s">จำลองทั้งหมด · 18 กรณี</text>
+      </g>
+      <!-- 6 · SIL -->
+      <g class="vstep" data-frag="6">
+        <line class="ln-d" x1="840" y1="552" x2="888" y2="552" marker-end="url(#ah6)"/>
+        <line class="conn" pathLength="1" x1="950" y1="444" x2="950" y2="490"/><polygon class="ah" points="942,488 958,488 950,500"/>
+        <rect x="888" y="502" width="340" height="100" rx="12" class="bx-s"/><text x="908" y="544" class="t-h">② SIL</text><text x="908" y="580" class="t-s">โค้ดรันบน PC · 31,463 samples</text>
+      </g>
+      <!-- 7 · PIL -->
+      <g class="vstep" data-frag="7">
+        <line class="ln-d" x1="1004" y1="392" x2="1048" y2="392" marker-start="url(#ah6)"/>
+        <line class="conn" pathLength="1" x1="1110" y1="500" x2="1110" y2="456"/><polygon class="ah" points="1102,458 1118,458 1110,446"/>
+        <rect x="1048" y="342" width="340" height="100" rx="12" fill="#fff" stroke="#1B2440" stroke-width="2.5"/>
+        <rect x="1048" y="342" width="14" height="100" fill="#E8692E"/>
+        <text x="1076" y="384" class="t-h">③ PIL · บอร์ด Mega จริง</text><text x="1076" y="420" class="t-s">Synthetic input · 1,453 samples</text>
+      </g>
+      <!-- 8 · ทดสอบถังจริง (HIL) -->
+      <g class="vstep" data-frag="8">
+        <line class="ln-d" x1="520" y1="232" x2="1208" y2="232" marker-end="url(#ah6)"/>
+        <line class="conn" pathLength="1" x1="1300" y1="340" x2="1300" y2="306"/><polygon class="ah" points="1292,308 1308,308 1300,296"/>
+        <rect x="1208" y="171" width="360" height="122" rx="12" class="bx-h"/><text x="1228" y="210" class="t-h">④ ทดสอบถังจริง</text><text x="1228" y="244" class="t-s">HIL ตามนิยามรายวิชา</text><text x="1228" y="274" class="t-s">18 การเปลี่ยน SP</text>
+      </g>
+      <!-- 9 · Standalone -->
+      <g class="vstep" data-frag="9">
+        <line class="ln-d" x1="360" y1="72" x2="1368" y2="72" marker-end="url(#ah6)"/>
+        <line class="conn" pathLength="1" x1="1470" y1="169" x2="1470" y2="146"/><polygon class="ah" points="1462,147 1478,147 1470,135"/>
+        <rect x="1368" y="11" width="340" height="122" rx="12" fill="#fff" stroke="#E8692E" stroke-width="2.5" stroke-dasharray="10 7"/><text x="1388" y="50" class="t-h">⑤ Standalone</text><text x="1388" y="84" class="t-s" style="fill:#B9481A">มีภาพ LCD · ยังไม่มีวิดีโอ</text><text x="1388" y="114" class="t-s" style="fill:#B9481A">→ รอหลักฐาน</text>
+      </g>
+    </svg></div><p class="scroll-hint">← เลื่อนแผนภาพไปทางขวาเพื่อดูครบ →</p>
+        <div class="legend"><span><span class="chip sim">ฟ้า</span> ผลจำลอง / โค้ดบน PC</span><span><span class="chip pil">เส้นคู่ + แถบส้ม</span> บอร์ดจริงแต่ input สังเคราะห์</span><span><span class="chip hw">ส้ม</span> ฮาร์ดแวร์และถังน้ำจริง</span><span><span class="chip pending">เส้นประ</span> หลักฐานยังไม่ครบ</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== 02 ฮาร์ดแวร์ ============================== -->
+<section class="sec" id="hardware">
+  <div class="wrap">
+    <div class="sec-head"><div class="kicker">02 · Hardware</div><h2>ฮาร์ดแวร์และชุดทดลอง</h2></div>
+    <div class="grid g-photo" id="hwOverview">
+      <figure><div class="fig photo"><img class="zoomable" src="assets/images/setup-overview.jpg" alt="ภาพรวมชุดทดลองจริง: ถังทดสอบ สเกล ถังพัก และกล่องควบคุม (LCD: SP 150 mm, PV 148.5 mm, STATE RUN)" loading="lazy" width="787" height="1400"></div><figcaption>ภาพรวมชุดทดลอง · LCD ในภาพ: SP 150 mm, PV 148.5 mm, STATE RUN</figcaption></figure>
+      <div class="grid" style="gap:16px">
+        <div class="tscroll" tabindex="0" role="region" aria-label="ตารางส่วนประกอบ">
+          <table class="t">
+            <thead><tr><th>ส่วนประกอบ</th><th>รายละเอียด</th></tr></thead>
+            <tbody>
+            <tr><td><b>ถังทดสอบ</b></td><td>Acrylic 100×100×500 mm · เซนเซอร์ VL53L0X อยู่ใต้ฝา</td></tr>
+            <tr><td><b>สเกลอ้างอิง</b></td><td>ติดข้างถัง อ่านด้วยสายตา · ใช้รายงาน e<sub>ss</sub></td></tr>
+            <tr><td><b>วาล์ว / ทางน้ำออก</b></td><td>ท่อออก ID 4 mm กลับลงถังพัก</td></tr>
+            <tr><td><b>ถังพัก</b></td><td>10 L · ปั๊ม AW500S 12 V จุ่มอยู่ภายใน</td></tr>
+            <tr><td><b>กล่องควบคุม + LCD</b></td><td>Mega 2560 · IRF520 (PWM ขา D5) · LCD2004 I²C · SP+ / SP− / Start</td></tr>
+            <tr><td><b>แหล่งจ่ายไฟ</b></td><td>12 V ปั๊ม · DC-DC 7 V → VIN</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="grid g3">
+          <div class="card kpi"><div class="num">10,000 mm²</div><div class="lab">พื้นที่หน้าตัดถัง A</div></div>
+          <div class="card kpi"><div class="num">0.2 s</div><div class="lab">Sample time T<sub>s</sub></div></div>
+          <div class="card kpi"><div class="num" style="font-size:clamp(24px,3vw,32px)">0 &lt; d ≤ 500 mm</div><div class="lab">ช่วงตรวจค่าในโปรแกรม (Fault check) — ไม่ใช่สเปกเซนเซอร์</div></div>
+        </div>
+        <p class="xs muted">อ้างอิงวงจร Water_Level_Schematic_R03</p>
+      </div>
+    </div>
+
+    <div class="sub">
+      <h3>กล่องควบคุม: Microcontroller, Driver, LCD และปุ่มกด</h3>
+      <div class="grid g-side">
+        <div class="grid g3">
+          <figure><div class="fig photo"><img class="zoomable" src="assets/images/box-front.jpg" alt="ด้านหน้ากล่องควบคุม: LCD2004 และปุ่ม SP+ / SP− / Start/Reset" loading="lazy" width="1051" height="1400"></div><figcaption><b>ด้านหน้า:</b> LCD2004 และปุ่มควบคุม SP+ / SP− / Start/Reset</figcaption></figure>
+          <figure><div class="fig photo"><img class="zoomable" src="assets/images/box-inside.jpg" alt="ภายในกล่อง: Arduino Mega 2560, โมดูล DC-DC และไดรเวอร์ IRF520" loading="lazy" width="1051" height="1400"></div><figcaption><b>ด้านใน:</b> Arduino Mega 2560, โมดูล DC-DC และไดรเวอร์ IRF520</figcaption></figure>
+          <figure><div class="fig photo"><img class="zoomable" src="assets/images/box-lid.jpg" alt="หลังฝากล่อง: LCD พร้อมบอร์ด I2C และสายปุ่มกด" loading="lazy" width="1051" height="1400"></div><figcaption><b>หลังฝา:</b> LCD พร้อมบอร์ด I²C และสายของปุ่มกด</figcaption></figure>
+        </div>
+        <div class="tscroll" tabindex="0" role="region" aria-label="ตารางขาต่อ">
+          <table class="t" style="min-width:300px">
+            <thead><tr><th>ขา</th><th>ต่อกับ</th></tr></thead>
+            <tbody>
+            <tr><td class="id">D5</td><td>PWM → SIG ของ IRF520</td></tr>
+            <tr><td class="id">D20</td><td>SDA (บัส I²C)</td></tr>
+            <tr><td class="id">D21</td><td>SCL (บัส I²C)</td></tr>
+            <tr><td class="id">D22</td><td>ปุ่ม SP+</td></tr>
+            <tr><td class="id">D23</td><td>ปุ่ม SP−</td></tr>
+            <tr><td class="id">D24</td><td>ปุ่ม Start</td></tr>
+            <tr><td class="id">VIN</td><td>DC-DC 7 V ผ่าน 1N4007</td></tr>
+            <tr><td class="id">5 V</td><td>VCC เซนเซอร์ · IRF520</td></tr>
+            <tr><td class="id">GND</td><td>Common ground ทั้งระบบ</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="sub">
+      <h3>เซนเซอร์วัดระดับ ปั๊ม และทางน้ำออก</h3>
+      <div class="grid g3">
+        <figure><div class="fig photo wide"><img class="zoomable" src="assets/images/sensor-lid.jpg" alt="เซนเซอร์ VL53L0X ติดใต้ฝาถัง" loading="lazy" width="1400" height="1049"></div><figcaption><b>เซนเซอร์ VL53L0X ใต้ฝาถัง:</b> Time-of-Flight วัดระยะ <i>d</i> จากฝาลงผิวน้ำ</figcaption></figure>
+        <figure><div class="fig photo wide"><img class="zoomable" src="assets/images/pump-reservoir.jpg" alt="ปั๊ม AW500S 12 V DC ในถังพัก" loading="lazy" width="1051" height="1400" style="object-position:50% 70%"></div><figcaption><b>ปั๊ม AW500S 12 V DC:</b> อยู่ในถังพัก ส่งน้ำขึ้นถังทดสอบ</figcaption></figure>
+        <figure><div class="fig photo wide"><img class="zoomable" src="assets/images/tank-base-valve.jpg" alt="วาล์วที่ฐานถังทดสอบ" loading="lazy" width="1051" height="1400" style="object-position:50% 45%"></div><figcaption><b>วาล์วที่ฐานถัง:</b> น้ำออกผ่านท่อกลับถังพัก</figcaption></figure>
+      </div>
+      <div class="grid g3" style="margin-top:16px">
+        <div class="card kpi"><div class="num">800 L/h</div><div class="lab">อัตราไหลสูงสุดตามสเปกผู้ผลิต — ไม่ใช่อัตราไหลที่วัดได้ในระบบ</div></div>
+        <div class="card kpi"><div class="num">ID 4 mm</div><div class="lab">เส้นผ่านศูนย์กลางภายในท่อน้ำออก</div></div>
+        <div class="card accent"><p class="small"><b>ระยะ <i>d</i> ≠ ระดับ <i>h</i></b> — เซนเซอร์วัดระยะ <i>d</i> จากฝาลงผิวน้ำ แล้วแปลงเป็นระดับ h<sub>m</sub> ด้วย Lookup Table ก่อนเข้า Filter · พารามิเตอร์ที่ Fit ได้แทนพฤติกรรมรวมของปั๊ม ท่อ วาล์ว และทางระบายทั้งชุด</p></div>
+      </div>
+    </div>
+
+    <div class="sub">
+      <h3>Single-loop feedback: PV ป้อนกลับเข้าจุดรวมก่อน PI</h3>
+      <div class="card"><div class="diagram"><svg viewBox="0 0 1728 600" aria-label="แผนภาพวงควบคุม">
+      <defs>
+        <marker id="ah10" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1B2440"/></marker>
+        <marker id="ah10g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#59627A"/></marker>
+      </defs>
+      <!-- group 4: boundaries + legend (ไว้ล่างสุดของ z-order) -->
+      <g class="" data-frag="4">
+        <path d="M232 22 H1318 V238 H1048 V478 H232 Z" fill="#EEF2F9" stroke="#2B4FA8" stroke-width="2.5" stroke-dasharray="12 8"/>
+        <text x="248" y="470" class="t-s" style="fill:#2B4FA8">Arduino Mega · T<tspan baseline-shift="sub" font-size="15">s</tspan> = 0.2 s</text>
+        <path d="M1340 22 H1716 V478 H1066 V252 H1340 Z" fill="#FDF0E9" stroke="#E8692E" stroke-width="2.5" stroke-dasharray="12 8"/>
+        <text x="1080" y="470" class="t-s" style="fill:#B9481A">อุปกรณ์จริง</text>
+        <rect x="232" y="512" width="520" height="70" rx="10" fill="#fff" stroke="#59627A" stroke-width="2" stroke-dasharray="6 6"/>
+        <text x="252" y="555" class="t-b">PC · External Mode: แสดงผล/บันทึกเท่านั้น</text>
+        <line x1="492" y1="512" x2="492" y2="480" class="ln-d"/>
+      </g>
+      <!-- group 1: forward path -->
+      <g class="" data-frag="1">
+        <rect x="20" y="70" width="180" height="96" rx="12" class="bx"/>
+        <text x="110" y="110" text-anchor="middle" class="t-h">Setpoint</text><text x="110" y="144" text-anchor="middle" class="t-s">SP+/SP− → Start</text>
+        <line x1="200" y1="118" x2="262" y2="118" class="ln" marker-end="url(#ah10)"/>
+        <circle cx="300" cy="118" r="36" fill="#fff" stroke="#1B2440" stroke-width="3"/>
+        <text x="300" y="129" text-anchor="middle" class="t-h">Σ</text>
+        <text x="246" y="102" class="t-h" style="font-size:30px">+</text>
+        <text x="314" y="190" class="t-h" style="font-size:34px">−</text>
+        <line x1="336" y1="118" x2="408" y2="118" class="ln" marker-end="url(#ah10)"/>
+        <text x="372" y="102" text-anchor="middle" class="t-s">e</text>
+        <rect x="410" y="70" width="230" height="96" rx="12" class="bx"/>
+        <text x="525" y="110" text-anchor="middle" class="t-h">PI</text><text x="525" y="144" text-anchor="middle" class="t-s">Kp 0.90 · Ki 0.011</text>
+        <line x1="640" y1="118" x2="698" y2="118" class="ln" marker-end="url(#ah10)"/>
+        <rect x="700" y="62" width="340" height="112" rx="12" class="bx"/>
+        <text x="870" y="98" text-anchor="middle" class="t-b">PI &gt; 0: u = PI + 38.5 (≤ 100)</text>
+        <text x="870" y="132" text-anchor="middle" class="t-b">PI ≤ 0: u = 0</text>
+        <text x="870" y="162" text-anchor="middle" class="t-s">u หน่วย count</text>
+        <line x1="1040" y1="118" x2="1088" y2="118" class="ln" marker-end="url(#ah10)"/>
+        <rect x="1090" y="70" width="210" height="96" rx="12" class="bx"/>
+        <text x="1195" y="110" text-anchor="middle" class="t-h">ALLOW</text><text x="1195" y="144" text-anchor="middle" class="t-s">Interlock → u = 0</text>
+        <line x1="1300" y1="118" x2="1388" y2="118" class="ln" marker-end="url(#ah10)"/>
+        <rect x="1390" y="70" width="310" height="96" rx="12" class="bx"/>
+        <text x="1545" y="110" text-anchor="middle" class="t-h">IRF520 + ปั๊ม</text><text x="1545" y="144" text-anchor="middle" class="t-s">PWM ขา D5</text>
+      </g>
+      <!-- group 2: plant -->
+      <g class="" data-frag="2">
+        <line x1="1545" y1="166" x2="1545" y2="318" class="ln" marker-end="url(#ah10)"/>
+        <text x="1560" y="250" class="t-b">Q<tspan baseline-shift="sub" font-size="15">in</tspan></text>
+        <rect x="1390" y="320" width="310" height="110" rx="12" class="bx"/>
+        <text x="1545" y="362" text-anchor="middle" class="t-h">ถังน้ำ</text><text x="1545" y="398" text-anchor="middle" class="t-b">ระดับจริง h</text>
+      </g>
+      <!-- group 3: measurement + feedback -->
+      <g class="" data-frag="3">
+        <line x1="1390" y1="375" x2="1302" y2="375" class="ln" marker-end="url(#ah10)"/>
+        <rect x="1090" y="320" width="210" height="110" rx="12" class="bx"/>
+        <text x="1195" y="362" text-anchor="middle" class="t-h">VL53L0X</text><text x="1195" y="398" text-anchor="middle" class="t-s">วัดระยะ d</text>
+        <line x1="1090" y1="375" x2="1012" y2="375" class="ln" marker-end="url(#ah10)"/>
+        <text x="1036" y="362" class="t-s">d</text>
+        <rect x="770" y="320" width="240" height="110" rx="12" class="bx"/>
+        <text x="890" y="362" text-anchor="middle" class="t-h">Lookup</text><text x="890" y="398" text-anchor="middle" class="t-s">d → h<tspan baseline-shift="sub" font-size="14">m</tspan> (ก่อน Filter)</text>
+        <line x1="770" y1="375" x2="712" y2="375" class="ln" marker-end="url(#ah10)"/>
+        <text x="722" y="362" class="t-s">h<tspan baseline-shift="sub" font-size="14">m</tspan></text>
+        <rect x="350" y="320" width="360" height="110" rx="12" class="bx"/>
+        <text x="530" y="362" text-anchor="middle" class="t-h">Low-pass filter</text><text x="530" y="398" text-anchor="middle" class="t-s">ได้ PV (หลัง Filter)</text>
+        <path d="M350 375 H300 V156" class="ln" marker-end="url(#ah10)"/>
+        <text x="248" y="300" class="t-b">PV</text>
+        <!-- interlock sensing -->
+        <line x1="1195" y1="320" x2="1195" y2="168" class="ln-d" marker-end="url(#ah10g)"/>
+        <text x="1206" y="214" class="t-s">ตรวจ d, h<tspan baseline-shift="sub" font-size="14">m</tspan></text>
+      </g>
+    </svg></div><p class="scroll-hint">← เลื่อนแผนภาพไปทางขวาเพื่อดูครบ →</p>
+        <div class="eqbox" style="margin-top:12px"><span class="tex d"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>e</mi><mo stretchy="false">[</mo><mi>k</mi><mo stretchy="false">]</mo><mo>=</mo><mrow><mi mathvariant="normal">S</mi><mi mathvariant="normal">P</mi></mrow><mo>−</mo><mrow><mi mathvariant="normal">P</mi><mi mathvariant="normal">V</mi></mrow><mo stretchy="false">[</mo><mi>k</mi><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">e[k]=\mathrm{SP}-\mathrm{PV}[k]</annotation></semantics></math></span><span class="tex d"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mrow><mi mathvariant="normal">P</mi><mi mathvariant="normal">V</mi></mrow><mo stretchy="false">[</mo><mi>k</mi><mo stretchy="false">]</mo><mo>=</mo><mn>0.2</mn><mtext> </mtext><msub><mi>h</mi><mi>m</mi></msub><mo stretchy="false">[</mo><mi>k</mi><mo stretchy="false">]</mo><mo>+</mo><mn>0.8</mn><mtext> </mtext><mrow><mi mathvariant="normal">P</mi><mi mathvariant="normal">V</mi></mrow><mo stretchy="false">[</mo><mi>k</mi><mo>−</mo><mn>1</mn><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">\mathrm{PV}[k]=0.2\,h_m[k]+0.8\,\mathrm{PV}[k-1]</annotation></semantics></math></span><p class="xs muted">e หน่วย mm · k = ลำดับ Sample · h = ระดับจริง (วัดตรงไม่ได้) · h<sub>m</sub> = ระดับหลัง Lookup</p></div>
+        <p class="small muted" style="margin-top:10px">Single loop ไม่ใช่ Cascade · ALLOW = 0 เมื่อ 0 &lt; d ≤ 500 mm ไม่เป็นจริง หรือ h<sub>m</sub> ≥ 310 mm</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== 03 แบบจำลอง ============================== -->
+<section class="sec" id="model">
+  <div class="wrap">
+    <div class="sec-head"><div class="kicker">03 · Model</div><h2>แบบจำลองและพารามิเตอร์</h2></div>
+
+    <h3>การทดลองอ้างอิง LAB1–LAB5: แต่ละครั้งใช้ทำอะไร</h3>
+    <div class="grid g-auto" style="margin-top:14px">
+      <div class="card"><h4>LAB1 <span class="chip hw">Step</span></h4><p class="xs muted">PI: ไม่ระบุในต้นฉบับ</p><p>วงปิดครั้งแรก · ระดับสูงสุด ≈ 330 mm</p><p class="small"><b>ใช้เป็น:</b> Cross-validation ของแบบจำลองเท่านั้น · RMSE 11.04 mm</p></div>
+      <div class="card"><h4>LAB2 <span class="chip hw">Step</span></h4><p class="xs muted">PI 1.24 / 0.0207</p><p>SP 0→200→150→125→200 mm · 1,802 samples (T<sub>s</sub> 0.2 s)</p><p class="small"><b>ใช้เป็น:</b> ข้อมูล Fit พารามิเตอร์ Plant (lsqnonlin)</p></div>
+      <div class="card"><h4>LAB3 <span class="chip hw">Step</span></h4><p class="xs muted">PI 1.24 / 0.0207</p><p>Peak 210.659 mm (125→200) · ต่ำสุด 119.167 mm (150→125)</p><p class="small"><b>ใช้เป็น:</b> โจทย์ลด Overshoot · Real–Sim RMSE 2.530 mm</p></div>
+      <div class="card"><h4>LAB4 <span class="chip hw">Step</span></h4><p class="xs muted">PI 0.90 / 0.011</p><p>Peak 200.894 mm · t<sub>s</sub> ช่วงเติมครั้งแรก 182.0 s</p><p class="small"><b>ใช้เป็น:</b> ทวนสอบผล Grid search · Real–Sim RMSE 2.175 mm</p></div>
+      <div class="card"><h4>LAB5 <span class="chip note">Ramp ขาลง</span></h4><p class="xs muted">PI 0.90 / 0.011</p><p>จำกัดการลด SP −0.5 mm/s · ต่ำสุด 147.184 mm (SP 150) · 124.376 mm (SP 125)</p><p class="small"><b>ใช้เป็น:</b> ทดสอบรูปแบบ SP ขาลง · Real–Sim RMSE 1.868 mm</p></div>
+    </div>
+    <p class="small muted" style="margin-top:10px">การทดสอบถังจริงรุ่นล่าสุด (เวอร์ชัน 1.48, Run14–17) ใช้ SP แบบ Step ไม่ใช่ Ramp แบบ LAB5</p>
+
+    <div class="sub">
+      <h3>สมการพลศาสตร์ของถังน้ำ พารามิเตอร์ และหน่วย</h3>
+      <div class="grid g2">
+        <div class="card accent">
+          <p class="xs muted">Mass balance · ปริมาตรสะสม = ปริมาตรเข้า − ปริมาตรออก</p>
+          <div class="texblock"><span class="tex d"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mstyle scriptlevel="0" displaystyle="true"><mrow><mi>A</mi><mtext> </mtext><mfrac><mrow><mi mathvariant="normal">d</mi><mi>h</mi></mrow><mrow><mi mathvariant="normal">d</mi><mi>t</mi></mrow></mfrac></mrow></mstyle><mstyle scriptlevel="0" displaystyle="true"><mrow><mrow></mrow><mo>=</mo><msub><mi>Q</mi><mrow><mi mathvariant="normal">i</mi><mi mathvariant="normal">n</mi></mrow></msub><mo>−</mo><msub><mi>Q</mi><mrow><mi mathvariant="normal">o</mi><mi mathvariant="normal">u</mi><mi mathvariant="normal">t</mi></mrow></msub></mrow></mstyle></mrow></math></span><span class="tex d"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mstyle scriptlevel="0" displaystyle="true"><msub><mi>Q</mi><mrow><mi mathvariant="normal">i</mi><mi mathvariant="normal">n</mi></mrow></msub></mstyle><mstyle scriptlevel="0" displaystyle="true"><mrow><mrow></mrow><mo>=</mo><mi>max</mi><mo>⁡</mo><mrow><mo fence="true">(</mo><msub><mi>K</mi><mi>u</mi></msub><mi>x</mi><mo>−</mo><msub><mi>K</mi><mi>h</mi></msub><mi>h</mi><mo>−</mo><msub><mi>Q</mi><mn>0</mn></msub><mo separator="true">,</mo><mtext>  </mtext><mn>0</mn><mo fence="true">)</mo></mrow></mrow></mstyle></mrow></math></span><span class="tex d"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mstyle scriptlevel="0" displaystyle="true"><msub><mi>Q</mi><mrow><mi mathvariant="normal">o</mi><mi mathvariant="normal">u</mi><mi mathvariant="normal">t</mi></mrow></msub></mstyle><mstyle scriptlevel="0" displaystyle="true"><mrow><mrow></mrow><mo>=</mo><msub><mi>C</mi><mi>o</mi></msub><msqrt><mi>h</mi></msqrt></mrow></mstyle></mrow></math></span><span class="tex d"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mstyle scriptlevel="0" displaystyle="true"><mrow><msub><mi>τ</mi><mi>m</mi></msub><mfrac><mrow><mi mathvariant="normal">d</mi><mi>x</mi></mrow><mrow><mi mathvariant="normal">d</mi><mi>t</mi></mrow></mfrac><mo>+</mo><mi>x</mi></mrow></mstyle><mstyle scriptlevel="0" displaystyle="true"><mrow><mrow></mrow><mo>=</mo><mi>u</mi></mrow></mstyle></mrow></math></span></div>
+          <p class="xs muted">Motor lag ในโดเมน s (เทียบเท่าบรรทัดสุดท้าย)</p>
+          <div class="texblock"><span class="tex d"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mfrac><mrow><mi>X</mi><mo stretchy="false">(</mo><mi>s</mi><mo stretchy="false">)</mo></mrow><mrow><mi>U</mi><mo stretchy="false">(</mo><mi>s</mi><mo stretchy="false">)</mo></mrow></mfrac><mo>=</mo><mfrac><mn>1</mn><mrow><msub><mi>τ</mi><mi>m</mi></msub><mi>s</mi><mo>+</mo><mn>1</mn></mrow></mfrac><mo separator="true">,</mo><mspace width="2em"></mspace><msub><mi>τ</mi><mi>m</mi></msub><mo>=</mo><mn>1.25</mn><mtext>&nbsp;</mtext><mi mathvariant="normal">s</mi></mrow><annotation encoding="application/x-tex">\frac{X(s)}{U(s)}=\frac{1}{\tau_m s+1},\qquad \tau_m=1.25\ \mathrm{s}</annotation></semantics></math></span></div>
+          <p class="xs" style="border-top:1px solid var(--line);padding-top:10px;margin-top:8px"><span class="tex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>h</mi></mrow><annotation encoding="application/x-tex">h</annotation></semantics></math></span> mm · <span class="tex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Q</mi></mrow><annotation encoding="application/x-tex">Q</annotation></semantics></math></span> mm³/s · <span class="tex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>u</mi><mo separator="true">,</mo><mtext> </mtext><mi>x</mi></mrow><annotation encoding="application/x-tex">u,\,x</annotation></semantics></math></span> PWM count · <span class="tex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi></mrow><annotation encoding="application/x-tex">t</annotation></semantics></math></span> s · Steady state เมื่อ <span class="tex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Q</mi><mrow><mi mathvariant="normal">i</mi><mi mathvariant="normal">n</mi></mrow></msub><mo>=</mo><msub><mi>Q</mi><mrow><mi mathvariant="normal">o</mi><mi mathvariant="normal">u</mi><mi mathvariant="normal">t</mi></mrow></msub></mrow><annotation encoding="application/x-tex">Q_{\mathrm{in}}=Q_{\mathrm{out}}</annotation></semantics></math></span></p>
+        </div>
+        <div class="tscroll" tabindex="0" role="region" aria-label="ตารางพารามิเตอร์">
+          <table class="t">
+            <thead><tr><th>ค่า</th><th>ความหมาย</th><th>หน่วย</th><th>ที่มา</th></tr></thead>
+            <tbody>
+            <tr><td class="id">A</td><td>พื้นที่หน้าตัดถัง</td><td class="num">mm²</td><td>วัดภายใน 100×100 mm → 10,000</td></tr>
+            <tr><td class="id">C<sub>o</sub></td><td>สัมประสิทธิ์การระบาย</td><td class="num">mm<sup>5/2</sup>/s</td><td>Drain test → Fit</td></tr>
+            <tr><td class="id">K<sub>u</sub></td><td>อัตราไหลต่อ PWM count</td><td class="num">mm³/(s·count)</td><td>Fill test → Fit</td></tr>
+            <tr><td class="id">K<sub>h</sub></td><td>ผลของระดับต่อ Q<sub>in</sub></td><td class="num">mm²/s</td><td>Steady state → Fit</td></tr>
+            <tr><td class="id">Q<sub>0</sub></td><td>Flow offset</td><td class="num">mm³/s</td><td>Fit</td></tr>
+            <tr><td class="id">τ<sub>m</sub></td><td>Motor time constant</td><td class="num">s</td><td>สมมติฐาน 1.25 s (ตรึงค่า)</td></tr>
+            <tr><td class="id">T<sub>s</sub>, Filter</td><td>Sample time · 0.2/0.8</td><td class="num">s · –</td><td>ค่าตั้งของระบบ</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="sub">
+      <h3>ค่าประมาณแรกของ C<sub>o</sub>, K<sub>u</sub> และ K<sub>h</sub></h3>
+      <div class="grid">
+        <div class="card">
+          <h4>C<sub>o</sub> จาก Drain test</h4>
+          <p class="small">PWM 0 (หยุดปั๊ม) · ระดับ 200 → 100 mm · Δt 70 s</p>
+          <div class="eqbox"><p class="xs muted">เมื่อ <span class="tex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Q</mi><mrow><mi mathvariant="normal">i</mi><mi mathvariant="normal">n</mi></mrow></msub><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">Q_{\mathrm{in}}=0</annotation></semantics></math></span> แล้ว Integrate จาก <span class="tex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>h</mi><mn>1</mn></msub></mrow><annotation encoding="application/x-tex">h_1</annotation></semantics></math></span> ถึง <span class="tex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>h</mi><mn>2</mn></msub></mrow><annotation encoding="application/x-tex">h_2</annotation></semantics></math></span></p><div class="texblock"><span class="tex d"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>A</mi><mtext> </mtext><mfrac><mrow><mi mathvariant="normal">d</mi><mi>h</mi></mrow><mrow><mi mathvariant="normal">d</mi><mi>t</mi></mrow></mfrac><mo>=</mo><mo>−</mo><msub><mi>C</mi><mi>o</mi></msub><msqrt><mi>h</mi></msqrt><mspace width="1em"></mspace><mo>⟹</mo><mspace width="1em"></mspace><msub><mi>C</mi><mi>o</mi></msub><mo>=</mo><mfrac><mrow><mn>2</mn><mi>A</mi><mrow><mo fence="true">(</mo><msqrt><msub><mi>h</mi><mn>1</mn></msub></msqrt><mo>−</mo><msqrt><msub><mi>h</mi><mn>2</mn></msub></msqrt><mo fence="true">)</mo></mrow></mrow><mrow><mi mathvariant="normal">Δ</mi><mi>t</mi></mrow></mfrac></mrow><annotation encoding="application/x-tex">A\,\frac{\mathrm{d}h}{\mathrm{d}t}=-C_o\sqrt{h}\quad\Longrightarrow\quad C_o=\frac{2A\left(\sqrt{h_1}-\sqrt{h_2}\right)}{\Delta t}</annotation></semantics></math></span></div><div class="texblock"><span class="tex d"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>C</mi><mi>o</mi></msub><mo>=</mo><mfrac><mrow><mn>2</mn><mtext> </mtext><mo stretchy="false">(</mo><mn>10</mn><mo separator="true" lspace="0em" rspace="0em">,</mo><mn>000</mn><mo stretchy="false">)</mo><mrow><mo fence="true">(</mo><msqrt><mn>200</mn></msqrt><mo>−</mo><msqrt><mn>100</mn></msqrt><mo fence="true">)</mo></mrow></mrow><mn>70</mn></mfrac></mrow><annotation encoding="application/x-tex">C_o=\frac{2\,(10{,}000)\left(\sqrt{200}-\sqrt{100}\right)}{70}</annotation></semantics></math></span></div></div>
+          <div class="kpi" style="margin-top:12px"><div class="num o">C<sub>o</sub> ≈ 1,183.47</div><div class="lab">mm<sup>5/2</sup>/s (ค่าประมาณแรก)</div></div>
+        </div>
+        <div class="card">
+          <h4>K<sub>u</sub> จาก Fill test</h4>
+          <p class="small">PWM คงที่ 100 count (ไม่ใช่ 100% duty) · ระดับ 0 → 129 mm · Δt 25 s</p>
+          <div class="eqbox"><p class="xs muted">ประมาณ <span class="tex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover accent="true"><mi>Q</mi><mo>ˉ</mo></mover><mrow><mi mathvariant="normal">o</mi><mi mathvariant="normal">u</mi><mi mathvariant="normal">t</mi></mrow></msub></mrow><annotation encoding="application/x-tex">\bar{Q}_{\mathrm{out}}</annotation></semantics></math></span> จากระดับเฉลี่ย <span class="tex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><msub><mi>h</mi><mn>1</mn></msub><mo>+</mo><msub><mi>h</mi><mn>2</mn></msub><mo stretchy="false">)</mo><mi mathvariant="normal">/</mi><mn>2</mn><mo>=</mo><mn>64.5</mn><mtext>&nbsp;</mtext><mrow><mi mathvariant="normal">m</mi><mi mathvariant="normal">m</mi></mrow></mrow><annotation encoding="application/x-tex">(h_1+h_2)/2=64.5\ \mathrm{mm}</annotation></semantics></math></span> และ <span class="tex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>C</mi><mi>o</mi></msub><mo>=</mo><mn>1</mn><mo separator="true" lspace="0em" rspace="0em">,</mo><mn>183.47</mn></mrow><annotation encoding="application/x-tex">C_o=1{,}183.47</annotation></semantics></math></span></p><div class="texblock"><span class="tex d"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mover accent="true"><mi>Q</mi><mo>ˉ</mo></mover><mrow><mi mathvariant="normal">i</mi><mi mathvariant="normal">n</mi></mrow></msub><mo>=</mo><mi>A</mi><mtext> </mtext><mfrac><mrow><mi mathvariant="normal">Δ</mi><mi>h</mi></mrow><mrow><mi mathvariant="normal">Δ</mi><mi>t</mi></mrow></mfrac><mo>+</mo><msub><mover accent="true"><mi>Q</mi><mo>ˉ</mo></mover><mrow><mi mathvariant="normal">o</mi><mi mathvariant="normal">u</mi><mi mathvariant="normal">t</mi></mrow></msub><mspace width="1em"></mspace><mo>⟹</mo><mspace width="1em"></mspace><msub><mi>K</mi><mi>u</mi></msub><mo>≈</mo><mfrac><mrow><mi>A</mi><mtext> </mtext><mfrac><mrow><mi mathvariant="normal">Δ</mi><mi>h</mi></mrow><mrow><mi mathvariant="normal">Δ</mi><mi>t</mi></mrow></mfrac><mo>+</mo><msub><mi>C</mi><mi>o</mi></msub><msqrt><mfrac><mrow><msub><mi>h</mi><mn>1</mn></msub><mo>+</mo><msub><mi>h</mi><mn>2</mn></msub></mrow><mn>2</mn></mfrac></msqrt></mrow><mi>u</mi></mfrac></mrow><annotation encoding="application/x-tex">\bar{Q}_{\mathrm{in}}=A\,\frac{\Delta h}{\Delta t}+\bar{Q}_{\mathrm{out}}\quad\Longrightarrow\quad K_u\approx\frac{A\,\dfrac{\Delta h}{\Delta t}+C_o\sqrt{\dfrac{h_1+h_2}{2}}}{u}</annotation></semantics></math></span></div><div class="texblock"><span class="tex d"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>K</mi><mi>u</mi></msub><mo>≈</mo><mfrac><mrow><mfrac><mrow><mn>10</mn><mo separator="true" lspace="0em" rspace="0em">,</mo><mn>000</mn><mtext> </mtext><mo stretchy="false">(</mo><mn>129</mn><mo stretchy="false">)</mo></mrow><mn>25</mn></mfrac><mo>+</mo><mn>1</mn><mo separator="true" lspace="0em" rspace="0em">,</mo><mn>183.47</mn><msqrt><mn>64.5</mn></msqrt></mrow><mn>100</mn></mfrac><mo>≈</mo><mfrac><mrow><mn>51</mn><mo separator="true" lspace="0em" rspace="0em">,</mo><mn>600</mn><mo>+</mo><mn>9</mn><mo separator="true" lspace="0em" rspace="0em">,</mo><mn>505</mn></mrow><mn>100</mn></mfrac></mrow><annotation encoding="application/x-tex">K_u\approx\frac{\dfrac{10{,}000\,(129)}{25}+1{,}183.47\sqrt{64.5}}{100}\approx\frac{51{,}600+9{,}505}{100}</annotation></semantics></math></span></div></div>
+          <div class="kpi" style="margin-top:12px"><div class="num o">K<sub>u</sub> ≈ 611.04</div><div class="lab">mm³/(s·count) (ค่าประมาณแรก)</div></div>
+          <p class="xs muted" style="margin-top:8px">โมเดลปั๊มตั้งต้น Q<sub>in</sub> ≈ K<sub>u</sub>·u ยังไม่มี K<sub>h</sub> และ Q<sub>0</sub> ของสมการเต็ม และละ Motor lag ในการประมาณขั้นนี้</p>
+        </div>
+        <div class="card">
+          <h4>K<sub>h</sub> จากจุดสมดุล (สมมติ Q<sub>0</sub> = 0)</h4>
+          <p class="small">u<sub>ss</sub> 55 count · h<sub>ss</sub> 200 mm</p>
+          <div class="eqbox"><p class="xs muted">ที่ Steady state: <span class="tex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Q</mi><mrow><mi mathvariant="normal">i</mi><mi mathvariant="normal">n</mi></mrow></msub><mo>=</mo><msub><mi>Q</mi><mrow><mi mathvariant="normal">o</mi><mi mathvariant="normal">u</mi><mi mathvariant="normal">t</mi></mrow></msub></mrow><annotation encoding="application/x-tex">Q_{\mathrm{in}}=Q_{\mathrm{out}}</annotation></semantics></math></span> และสมมติ <span class="tex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Q</mi><mn>0</mn></msub><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">Q_0=0</annotation></semantics></math></span> ในขั้นนี้</p><div class="texblock"><span class="tex d"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>K</mi><mi>u</mi></msub><msub><mi>u</mi><mrow><mi mathvariant="normal">s</mi><mi mathvariant="normal">s</mi></mrow></msub><mo>−</mo><msub><mi>K</mi><mi>h</mi></msub><msub><mi>h</mi><mrow><mi mathvariant="normal">s</mi><mi mathvariant="normal">s</mi></mrow></msub><mo>=</mo><msub><mi>C</mi><mi>o</mi></msub><msqrt><msub><mi>h</mi><mrow><mi mathvariant="normal">s</mi><mi mathvariant="normal">s</mi></mrow></msub></msqrt><mspace width="1em"></mspace><mo>⟹</mo><mspace width="1em"></mspace><msub><mi>K</mi><mi>h</mi></msub><mo>=</mo><mfrac><mrow><msub><mi>K</mi><mi>u</mi></msub><msub><mi>u</mi><mrow><mi mathvariant="normal">s</mi><mi mathvariant="normal">s</mi></mrow></msub><mo>−</mo><msub><mi>C</mi><mi>o</mi></msub><msqrt><msub><mi>h</mi><mrow><mi mathvariant="normal">s</mi><mi mathvariant="normal">s</mi></mrow></msub></msqrt></mrow><msub><mi>h</mi><mrow><mi mathvariant="normal">s</mi><mi mathvariant="normal">s</mi></mrow></msub></mfrac></mrow><annotation encoding="application/x-tex">K_u u_{\mathrm{ss}}-K_h h_{\mathrm{ss}}=C_o\sqrt{h_{\mathrm{ss}}}\quad\Longrightarrow\quad K_h=\frac{K_u u_{\mathrm{ss}}-C_o\sqrt{h_{\mathrm{ss}}}}{h_{\mathrm{ss}}}</annotation></semantics></math></span></div><div class="texblock"><span class="tex d"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>K</mi><mi>h</mi></msub><mo>≈</mo><mfrac><mrow><mn>549.06</mn><mtext> </mtext><mo stretchy="false">(</mo><mn>55</mn><mo stretchy="false">)</mo><mo>−</mo><mn>1</mn><mo separator="true" lspace="0em" rspace="0em">,</mo><mn>052.77</mn><msqrt><mn>200</mn></msqrt></mrow><mn>200</mn></mfrac></mrow><annotation encoding="application/x-tex">K_h\approx\frac{549.06\,(55)-1{,}052.77\sqrt{200}}{200}</annotation></semantics></math></span></div></div>
+          <div class="kpi" style="margin-top:12px"><div class="num o">K<sub>h</sub> ≈ 76.55</div><div class="lab">mm²/s (ค่าประมาณแรก)</div></div>
+          <p class="xs muted" style="margin-top:8px">ค่าที่ใช้แทน: K<sub>u</sub> = 549.06 และ C<sub>o</sub> = 1,052.77 ซึ่งต้นฉบับระบุว่าเป็น Initial estimate จากการทดลองต่างช่วง · ระดับน้ำเพิ่ม 1 mm → อัตราไหลของปั๊มลดลง K<sub>h</sub> mm³/s</p>
+        </div>
+      </div>
+      <div class="tscroll" tabindex="0" role="region" aria-label="ค่าพารามิเตอร์แต่ละรุ่น" style="margin-top:16px">
+        <table class="t">
+          <thead><tr><th>ค่า</th><th>รุ่น / ที่มา</th><th class="num">ค่า</th></tr></thead>
+          <tbody>
+          <tr class="sep"><td colspan="3">C<sub>o</sub> ที่ปรากฏในงานนี้ (คนละรุ่น) · mm<sup>5/2</sup>/s</td></tr>
+          <tr><td>C<sub>o</sub></td><td>Drain test · ใช้หา K<sub>u</sub></td><td class="num">1,183.47</td></tr>
+          <tr><td>C<sub>o</sub></td><td>Initial estimate ที่ใช้หา K<sub>h</sub> และ SIMC</td><td class="num">1,052.77</td></tr>
+          <tr><td>C<sub>o</sub></td><td>หลัง Fit ด้วย LAB2</td><td class="num">1,348.08</td></tr>
+          <tr class="sep"><td colspan="3">K<sub>u</sub> ที่ปรากฏในงานนี้ (คนละรุ่น) · mm³/(s·count)</td></tr>
+          <tr><td>K<sub>u</sub></td><td>Fill test</td><td class="num">611.04</td></tr>
+          <tr><td>K<sub>u</sub></td><td>ใช้หา K<sub>h</sub></td><td class="num">549.06</td></tr>
+          <tr><td>K<sub>u</sub></td><td>Initial estimate ใน SIMC / ตาราง Fit</td><td class="num">536.36</td></tr>
+          <tr><td>K<sub>u</sub></td><td>หลัง Fit LAB2 (มี K<sub>h</sub>, Q<sub>0</sub>)</td><td class="num">941.22</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="sub">
+      <h3>ประมาณพารามิเตอร์ร่วมด้วย lsqnonlin บนข้อมูล LAB2</h3>
+      <div class="grid g-side">
+        <div class="card"><div class="diagram"><svg viewBox="0 0 1120 420" aria-label="วงรอบ Optimization">
+        <defs><marker id="ah17" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1B2440"/></marker></defs>
+        <g class="" data-frag="1">
+          <rect x="10" y="40" width="220" height="96" rx="12" class="bx-h"/><text x="120" y="80" text-anchor="middle" class="t-h">u[k] ที่วัดได้</text><text x="120" y="114" text-anchor="middle" class="t-s">PWM จาก LAB2</text>
+          <line x1="230" y1="88" x2="298" y2="88" class="ln" marker-end="url(#ah17)"/>
+          <rect x="300" y="40" width="290" height="96" rx="12" class="bx-s"/><text x="445" y="80" text-anchor="middle" class="t-h">จำลองแบบจำลอง</text><text x="445" y="114" text-anchor="middle" class="t-s">ด้วย θ · Integrator RK2</text>
+        </g>
+        <g class="" data-frag="2">
+          <path d="M590 88 H760 V188" class="ln" marker-end="url(#ah17)"/>
+          <text x="610" y="74" class="t-s">ySim[k; θ]</text>
+          <rect x="640" y="190" width="240" height="96" rx="12" class="bx"/><text x="760" y="230" text-anchor="middle" class="t-h">Residual</text><text x="760" y="264" text-anchor="middle" class="t-s">r = ySim − yReal</text>
+          <line x1="940" y1="238" x2="882" y2="238" class="ln" marker-end="url(#ah17)"/>
+          <rect x="940" y="190" width="170" height="96" rx="12" class="bx-h"/><text x="1025" y="230" text-anchor="middle" class="t-h">yReal[k]</text><text x="1025" y="264" text-anchor="middle" class="t-s">ระดับ LAB2</text>
+        </g>
+        <g class="" data-frag="3">
+          <path d="M760 286 V350 H592" class="ln" marker-end="url(#ah17)"/>
+          <rect x="300" y="302" width="290" height="96" rx="12" class="bx"/><text x="445" y="342" text-anchor="middle" class="t-h">lsqnonlin ปรับ θ</text><text x="445" y="376" text-anchor="middle" class="t-s">ลด Σ r²</text>
+          <line x1="445" y1="302" x2="445" y2="138" class="ln" marker-end="url(#ah17)"/>
+          <text x="456" y="230" class="t-s">θ ใหม่ (วนซ้ำ)</text>
+          <line x1="300" y1="350" x2="232" y2="350" class="ln" marker-end="url(#ah17)"/>
+          <rect x="10" y="302" width="220" height="96" rx="12" class="bx"/><text x="120" y="342" text-anchor="middle" class="t-h">θ*</text><text x="120" y="376" text-anchor="middle" class="t-s">เมื่อลู่เข้า</text>
+        </g>
+      </svg></div><div class="eqbox" style="margin-top:10px"><span class="tex d texline"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mstyle scriptlevel="0" displaystyle="true"><mrow><mi>r</mi><mo stretchy="false">[</mo><mi>k</mi><mo separator="true">;</mo><mi>θ</mi><mo stretchy="false">]</mo></mrow></mstyle><mstyle scriptlevel="0" displaystyle="true"><mrow><mrow></mrow><mo>=</mo><msub><mi>y</mi><mrow><mi mathvariant="normal">s</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">m</mi></mrow></msub><mo stretchy="false">[</mo><mi>k</mi><mo separator="true">;</mo><mi>θ</mi><mo stretchy="false">]</mo><mo>−</mo><msub><mi>y</mi><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">l</mi></mrow></msub><mo stretchy="false">[</mo><mi>k</mi><mo stretchy="false">]</mo></mrow></mstyle></mrow></math></span><span class="tex d texline"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mstyle scriptlevel="0" displaystyle="true"><msup><mi>θ</mi><mo lspace="0em" rspace="0em">∗</mo></msup></mstyle><mstyle scriptlevel="0" displaystyle="true"><mrow><mrow></mrow><mo>=</mo><mi>arg</mi><mo>⁡</mo><munder><mrow><mi>min</mi><mo>⁡</mo></mrow><mi>θ</mi></munder><munder><mo>∑</mo><mi>k</mi></munder><mi>r</mi><mo stretchy="false">[</mo><mi>k</mi><mo separator="true">;</mo><mi>θ</mi><msup><mo stretchy="false">]</mo><mn>2</mn></msup><mo separator="true">,</mo><mspace width="2em"></mspace><mi>θ</mi><mo>=</mo><mrow><mo fence="true">{</mo><msub><mi>K</mi><mi>u</mi></msub><mo separator="true">,</mo><mtext> </mtext><msub><mi>K</mi><mi>h</mi></msub><mo separator="true">,</mo><mtext> </mtext><msub><mi>C</mi><mi>o</mi></msub><mo separator="true">,</mo><mtext> </mtext><msub><mi>Q</mi><mn>0</mn></msub><mo separator="true">,</mo><mtext> </mtext><msub><mi>h</mi><mrow><mi mathvariant="normal">i</mi><mi mathvariant="normal">n</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">t</mi></mrow></msub><mo fence="true">}</mo></mrow></mrow></mstyle></mrow></math></span></div></div>
+        <div class="grid" style="gap:14px">
+          <div class="card kpi"><div class="num o">18.09 mm</div><div class="lab">RMSE ของแบบจำลองตั้งต้นเมื่อป้อน PWM ที่วัดได้ → จึงต้อง Fit ใหม่</div></div>
+          <div class="card small"><b>วิธี:</b> Nonlinear grey-box output-error least squares<br><b>ตรึงค่า:</b> A = 10,000 mm² · τ<sub>m</sub> = 1.25 s · τ<sub>s</sub> = 3.9 s<br><b>ค้นหา:</b> 5 โครงสร้างแบบจำลอง × 3 Initial guess · มี Parameter bounds<br><b>h<sub>init</sub></b> = ระดับเริ่มต้นของข้อมูล (คนละตัวกับ h<sub>0</sub> = 200 mm ของ SIMC)<br><b>ข้อมูล:</b> ใช้ LAB2 ช่วง 20–360.2 s ที่ T<sub>s</sub> 0.2 s</div>
+          <div class="card accent-o small"><b>τ<sub>s</sub> กับ Filter 0.2/0.8 ต่างกัน:</b> τ<sub>s</sub> เป็นพารามิเตอร์ที่ตรึงในแบบจำลองที่ใช้ Fit · Filter 0.2/0.8 คือ Filter แบบ Discrete บน Arduino ที่สร้าง PV (≈ ค่าคงตัวเวลา 0.9 s ที่ T<sub>s</sub> 0.2 s)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sub">
+      <h3>ผลก่อน–หลังปรับแบบจำลอง: แยกการประเมิน 3 แบบ</h3>
+      <figure><div class="fig"><img class="zoomable" src="assets/images/fit-lab2.png" alt="LAB2: ระดับจริงเทียบแบบจำลองเดิมและใหม่ และผลต่าง (Closed-loop comparison)" loading="lazy" width="2095" height="1254"></div>
+        <figcaption><b>LAB2 · Closed-loop comparison</b> ด้วย PI 1.24/0.0207 · แกนเวลานับจาก Sample แรกที่บันทึก · Fit เริ่มที่ 20 s · ภาพต้นฉบับ: ระดับจริง = ส้ม, แบบจำลองเดิม = เทา, แบบจำลองใหม่ = น้ำเงิน · คลิกเพื่อขยาย</figcaption></figure>
+      <div class="grid g-side" style="margin-top:16px">
+        <div class="tscroll" tabindex="0" role="region" aria-label="ตารางผล Fit">
+          <table class="t">
+            <thead><tr><th>ค่า</th><th class="num">Initial</th><th class="num">หลัง Fit</th><th>หน่วย</th></tr></thead>
+            <tbody>
+            <tr><td class="id">K<sub>u</sub></td><td class="num">536.36</td><td class="num"><b>941.22</b></td><td>mm³/(s·count)</td></tr>
+            <tr><td class="id">K<sub>h</sub></td><td class="num">76.55</td><td class="num"><b>18.935</b></td><td>mm²/s</td></tr>
+            <tr><td class="id">C<sub>o</sub></td><td class="num">1,052.77</td><td class="num"><b>1,348.08</b></td><td>mm<sup>5/2</sup>/s</td></tr>
+            <tr><td class="id">Q<sub>0</sub></td><td class="num">—</td><td class="num"><b>28,265.07</b></td><td>mm³/s</td></tr>
+            </tbody>
+            <caption>K<sub>h</sub> 76.55 ในคอลัมน์ Initial คำนวณจาก K<sub>u</sub> 549.06 · Effective parameters แม่นที่สุดช่วง 125–200 mm · ช่วง &gt; 220 mm ยังคลาดเคลื่อนสูง</caption>
+          </table>
+        </div>
+        <div class="grid" style="gap:12px">
+          <div class="card kpi"><div class="lab">① Open-loop replay (ป้อน PWM ที่วัดได้)</div><div class="num">18.09 → 3.07 mm</div></div>
+          <div class="card kpi"><div class="lab">② Closed-loop comparison (โมเดลคำนวณ PWM เอง)</div><div class="num">9.61 → 2.62 mm</div></div>
+          <div class="card kpi"><div class="lab">③ Cross-validation กับ LAB1</div><div class="num">11.04 mm</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== 04 ออกแบบ PI ============================== -->
+<section class="sec" id="pi">
+  <div class="wrap">
+    <div class="sec-head"><div class="kicker">04 · PI Design</div><h2>ออกแบบและจูน PI</h2></div>
+    <h3>PI ตั้งต้นด้วยกฎ SIMC บนแบบจำลองลดรูป</h3>
+    <div class="grid g3" style="margin-top:14px">
+      <div class="card accent"><h4>1 · แบบจำลองลดรูปรอบ h<sub>0</sub> = 200 mm</h4><div class="texblock"><span class="tex d"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>G</mi><mo stretchy="false">(</mo><mi>s</mi><mo stretchy="false">)</mo><mo>=</mo><mfrac><mi>K</mi><mrow><mi>τ</mi><mi>s</mi><mo>+</mo><mn>1</mn></mrow></mfrac></mrow><annotation encoding="application/x-tex">G(s)=\frac{K}{\tau s+1}</annotation></semantics></math></span></div><div class="texblock"><span class="tex d"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>R</mi><mi>h</mi></msub><mo>=</mo><mfrac><mrow><mn>2</mn><msqrt><msub><mi>h</mi><mn>0</mn></msub></msqrt></mrow><msub><mi>C</mi><mi>o</mi></msub></mfrac><mo separator="true">,</mo><mspace width="1em"></mspace><mi>τ</mi><mo>=</mo><mi>A</mi><mtext> </mtext><msub><mi>R</mi><mi>h</mi></msub><mo separator="true">,</mo><mspace width="1em"></mspace><mi>K</mi><mo>=</mo><msub><mi>K</mi><mi>u</mi></msub><msub><mi>R</mi><mi>h</mi></msub></mrow><annotation encoding="application/x-tex">R_h=\frac{2\sqrt{h_0}}{C_o},\quad \tau=A\,R_h,\quad K=K_u R_h</annotation></semantics></math></span></div><p class="small">ใช้ <span class="tex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>K</mi><mi>u</mi></msub><mo>=</mo><mn>536.36</mn><mo separator="true">,</mo><mtext>&nbsp;</mtext><msub><mi>C</mi><mi>o</mi></msub><mo>=</mo><mn>1</mn><mo separator="true" lspace="0em" rspace="0em">,</mo><mn>052.77</mn><mo separator="true">,</mo><mtext>&nbsp;</mtext><mi>A</mi><mo>=</mo><mn>10</mn><mo separator="true" lspace="0em" rspace="0em">,</mo><mn>000</mn></mrow><annotation encoding="application/x-tex">K_u=536.36,\ C_o=1{,}052.77,\ A=10{,}000</annotation></semantics></math></span></p><div class="texblock"><span class="tex d"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mstyle scriptlevel="0" displaystyle="true"><mi>τ</mi></mstyle><mstyle scriptlevel="0" displaystyle="true"><mrow><mrow></mrow><mo>≈</mo><mn>268.665</mn><mtext>&nbsp;</mtext><mi mathvariant="normal">s</mi></mrow></mstyle></mrow></math></span><span class="tex d"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mstyle scriptlevel="0" displaystyle="true"><mi>K</mi></mstyle><mstyle scriptlevel="0" displaystyle="true"><mrow><mrow></mrow><mo>≈</mo><mn>14.410</mn><mtext>&nbsp;</mtext><mrow><mi mathvariant="normal">m</mi><mi mathvariant="normal">m</mi><mi mathvariant="normal">/</mi><mi mathvariant="normal">c</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">u</mi><mi mathvariant="normal">n</mi><mi mathvariant="normal">t</mi></mrow></mrow></mstyle></mrow></math></span></div></div>
+      <div class="card accent"><h4>2 · กฎ SIMC (θ = 0, τ<sub>c</sub> = λ = 15 s)</h4><div class="texblock"><span class="tex d"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mstyle scriptlevel="0" displaystyle="true"><msub><mi>K</mi><mi>p</mi></msub></mstyle><mstyle scriptlevel="0" displaystyle="true"><mrow><mrow></mrow><mo>=</mo><mfrac><mi>τ</mi><mrow><mi>K</mi><mrow><mo fence="true">(</mo><msub><mi>τ</mi><mi>c</mi></msub><mo>+</mo><mi>θ</mi><mo fence="true">)</mo></mrow></mrow></mfrac><mo>≈</mo><mn>1.24295</mn></mrow></mstyle></mrow></math></span><span class="tex d"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mstyle scriptlevel="0" displaystyle="true"><msub><mi>T</mi><mi>i</mi></msub></mstyle><mstyle scriptlevel="0" displaystyle="true"><mrow><mrow></mrow><mo>=</mo><mi>min</mi><mo>⁡</mo><mrow><mo fence="true">[</mo><mi>τ</mi><mo separator="true">,</mo><mtext>  </mtext><mn>4</mn><mrow><mo fence="true">(</mo><msub><mi>τ</mi><mi>c</mi></msub><mo>+</mo><mi>θ</mi><mo fence="true">)</mo></mrow><mo fence="true">]</mo></mrow><mo>=</mo><mn>60</mn><mtext>&nbsp;</mtext><mi mathvariant="normal">s</mi></mrow></mstyle></mrow></math></span><span class="tex d"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mstyle scriptlevel="0" displaystyle="true"><msub><mi>K</mi><mi>i</mi></msub></mstyle><mstyle scriptlevel="0" displaystyle="true"><mrow><mrow></mrow><mo>=</mo><mfrac><msub><mi>K</mi><mi>p</mi></msub><msub><mi>T</mi><mi>i</mi></msub></mfrac><mo>≈</mo><mn>0.020716</mn></mrow></mstyle></mrow></math></span></div><p class="xs muted" style="border-top:1px solid var(--line);padding-top:8px;margin-top:8px">ค่าที่ใช้ทดลอง LAB2–LAB3</p><div class="texblock"><span class="tex d"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mstyle scriptlevel="0" displaystyle="true"><msub><mi>K</mi><mi>p</mi></msub></mstyle><mstyle scriptlevel="0" displaystyle="true"><mrow><mrow></mrow><mo>=</mo><mn>1.24</mn><mtext>&nbsp;</mtext><mrow><mi mathvariant="normal">c</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">u</mi><mi mathvariant="normal">n</mi><mi mathvariant="normal">t</mi><mi mathvariant="normal">/</mi><mi mathvariant="normal">m</mi><mi mathvariant="normal">m</mi></mrow></mrow></mstyle></mrow></math></span><span class="tex d"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mstyle scriptlevel="0" displaystyle="true"><msub><mi>K</mi><mi>i</mi></msub></mstyle><mstyle scriptlevel="0" displaystyle="true"><mrow><mrow></mrow><mo>=</mo><mn>0.0207</mn><mtext>&nbsp;</mtext><mrow><mi mathvariant="normal">c</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">u</mi><mi mathvariant="normal">n</mi><mi mathvariant="normal">t</mi><mi mathvariant="normal">/</mi><mo stretchy="false">(</mo><mi mathvariant="normal">m</mi><mi mathvariant="normal">m</mi><mo>⋅</mo><mi mathvariant="normal">s</mi><mo stretchy="false">)</mo></mrow></mrow></mstyle></mrow></math></span></div></div>
+      <div class="card accent-o"><h4>สมมติฐาน / พจน์ที่ละไว้</h4><ul class="pts o small"><li>ละ <span class="tex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>K</mi><mi>h</mi></msub></mrow><annotation encoding="application/x-tex">K_h</annotation></semantics></math></span>: ในสมการเต็มช่วง <span class="tex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Q</mi><mrow><mi mathvariant="normal">i</mi><mi mathvariant="normal">n</mi></mrow></msub><mo>&gt;</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">Q_{\mathrm{in}}&gt;0</annotation></semantics></math></span> ผลของระดับมีทั้ง <span class="tex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>K</mi><mi>h</mi></msub></mrow><annotation encoding="application/x-tex">K_h</annotation></semantics></math></span> และ <span class="tex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mstyle displaystyle="true" scriptlevel="0"><mfrac><msub><mi>C</mi><mi>o</mi></msub><mrow><mn>2</mn><msqrt><msub><mi>h</mi><mn>0</mn></msub></msqrt></mrow></mfrac></mstyle></mrow><annotation encoding="application/x-tex">\dfrac{C_o}{2\sqrt{h_0}}</annotation></semantics></math></span> — แบบจำลองตั้งต้นใช้เฉพาะพจน์หลัง</li><li>ละ Q<sub>0</sub>, Motor lag τ<sub>m</sub> และ Filter ของ PV</li><li>Dead time θ = 0</li><li>ไม่รวม Saturation และปั๊มทางเดียว</li></ul><p class="xs muted" style="margin-top:8px">อ้างอิง: Skogestad (2003) SIMC tuning rules · เป็นจุดเริ่มต้นการออกแบบ ทวนสอบกับระบบจริงใน LAB3 แล้วจึงจูนใหม่</p></div>
+    </div>
+
+    <div class="sub">
+      <h3>ปรับจูน PI ด้วย Grid search บนแบบจำลอง แล้วทดลองจริง</h3>
+      <div class="grid g3">
+        <div class="card hero-num"><span class="k">K<sub>p</sub></span><span class="v">0.90</span><span class="u">count/mm</span></div>
+        <div class="card hero-num"><span class="k">K<sub>i</sub></span><span class="v">0.011</span><span class="u">count/(mm·s)</span></div>
+        <div class="card accent"><b>ค่าที่ใช้บนบอร์ด</b><p class="small">เลือกจาก Grid search บนแบบจำลองที่ Fit แล้ว · T<sub>s</sub> 0.2 s · Forward Euler</p><p class="xs muted">Error เป็น mm และเอาต์พุตเป็น PWM count</p></div>
+      </div>
+      <div class="grid g3" style="margin-top:16px">
+        <div class="card accent"><h4>ค้นหาใน Simulation <span class="chip sim">ผลจำลอง</span></h4><ul class="pts small"><li>Coarse grid 570 ชุด → Fine grid 875 คู่ (Python/NumPy บนแบบจำลองที่ Fit แล้ว)</li><li><b>เกณฑ์ค้นหา</b>: Overshoot ≤ 2 mm · t<sub>s</sub> ≤ 180 s · Tail MAE ≤ 1 mm</li><li>Cost <span class="tex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>J</mi><mo>=</mo><mn>3</mn><mi>max</mi><mo>⁡</mo><mo stretchy="false">(</mo><mtext>overshoot</mtext><mo stretchy="false">)</mo><mo>+</mo><mn>0.03</mn><mi>max</mi><mo>⁡</mo><mo stretchy="false">(</mo><mtext>settling</mtext><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">J=3\max(\text{overshoot})+0.03\max(\text{settling})</annotation></semantics></math></span></li><li>Sensitivity เพิ่มเติม 9 กรณี</li></ul><p class="xs muted">เกณฑ์ค้นหานี้ใช้คัดเลือกใน Simulation — ไม่ใช่เกณฑ์ตัดสิน R2–R4</p></div>
+        <div class="card accent-o"><h4>ผลจริง LAB3 → LAB4 <span class="chip hw">ถังจริง</span></h4>
+          <div class="tscroll"><table class="t" style="min-width:380px"><thead><tr><th>ตัวชี้วัด</th><th class="num">LAB3 1.24/0.0207</th><th class="num">LAB4 0.90/0.011</th></tr></thead><tbody><tr><td>Peak ช่วงเข้า SP 200</td><td class="num">210.659 mm</td><td class="num">200.894 mm</td></tr><tr><td>t<sub>s</sub> ช่วงเติมครั้งแรก</td><td class="num">56.6 s</td><td class="num">182.0 s</td></tr></tbody></table></div>
+          <p class="small" style="margin-top:8px">Trade-off ที่สังเกตได้: Peak ลดลง แต่ t<sub>s</sub> ช่วงเติมครั้งแรกนานขึ้น</p><p class="xs muted">คนละ Run และคนละลำดับ SP — ไม่ใช่คู่ทดสอบเดียวกัน</p></div>
+        <div class="card"><h4>ขีดจำกัดเอาต์พุตบนฮาร์ดแวร์</h4><p class="small"><b>PI out</b> 0–61.5 · clamping<br><b>PWM</b> PI &gt; 0: PI + 38.5 (≤ 100)<br>PI ≤ 0: 0 → ปั๊มหยุดสั่ง</p><p class="xs muted">61.5 + 38.5 = 100 count → Anti-windup ใช้ขีดจำกัดเดียวกับ Actuator</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== 05 ผลทดสอบ ============================== -->
+<section class="sec" id="tests">
+  <div class="wrap">
+    <div class="sec-head"><div class="kicker">05 · Verification</div><h2>ผลทดสอบตาม V-Model</h2><p class="lead">MIL, SIL และ PIL เป็นผลจากการจำลองหรือการรันโค้ดกับ input สังเคราะห์ แยกจากการทดลองกับถังน้ำจริงในหัวข้อถัดไป</p></div>
+
+    <h3>MIL: ผ่านเกณฑ์ครบ 18/18 กรณี <span class="chip sim">ผลจำลอง</span></h3>
+    <figure style="margin-top:12px"><div class="fig"><img class="zoomable" src="assets/images/mil-300-100.png" alt="MIL กรณี 300 ไป 100 mm: SP, Applied SP, Plant และ PV" loading="lazy" width="1644" height="1138"></div>
+      <figcaption><b>MIL กรณี 300→100 mm</b> · แกน x = Simulation time (s) · แผงกลางคือช่วงหลังเปลี่ยน SP ที่ 300 s · t<sub>s</sub> = 181.2 s (t ≈ 481 s) · คลิกเพื่อขยาย</figcaption></figure>
+    <div class="grid g4" style="margin-top:16px">
+      <div class="card kpi"><div class="num">18 / 18</div><div class="lab">กรณีผ่านทุกเกณฑ์</div></div>
+      <div class="card kpi"><div class="num">0.48%</div><div class="lab">Overshoot สูงสุด (100→125)</div></div>
+      <div class="card kpi"><div class="num">181.2 s</div><div class="lab">t<sub>s</sub> สูงสุด (300→100)</div></div>
+      <div class="card kpi"><div class="num">0.38 mm</div><div class="lab">e<sub>ss</sub> สูงสุด (100→300)</div></div>
+    </div>
+    <p class="small muted" style="margin-top:10px">Step ขึ้น 8 กรณี: t<sub>s</sub> ≤ 15.2 s · Step ลง 8 กรณี: t<sub>s</sub> ≤ 15.6 s · เต็มช่วง 100→300: t<sub>s</sub> 54.0 s · รุ่นโมเดล: Plant จาก Fit LAB2 · PI 0.90/0.011 เดียวกับบนบอร์ด · SP ขาลงแบบ Step · Filter 0.2/0.8 ตรงกับฮาร์ดแวร์เวอร์ชัน 1.48 · รันใหม่ 30 ต.ค. · แบบจำลองแม่นที่สุดช่วง 125–200 mm จึงไม่แทนผลถังจริงที่ 100 mm</p>
+
+    <div class="sub">
+      <h3>SIL: ผลตรงกันทุก Sample ในชุดทดสอบ <span class="chip sim">ผลจำลอง · โค้ดบน PC</span></h3>
+      <div class="grid g-side">
+        <figure><div class="fig"><img class="zoomable" src="assets/images/sil-c1.png" alt="SIL กรณี C1: Normal (โมเดล) เทียบ SIL และผลต่าง" loading="lazy" width="2347" height="1322"></div><figcaption><b>กรณี SIL-C1</b> · Normal (โมเดล) เทียบ SIL (โค้ด C บน PC) · แกนเวลานับจากเริ่ม Simulation · แผงล่าง = ผลต่าง (หน่วย ×10<sup>−6</sup>)</figcaption></figure>
+        <div class="grid" style="gap:12px">
+          <div class="card kpi"><div class="num">0</div><div class="lab">Max|Δ| และ RMSE ทุกคู่สัญญาณ (tolerance 1×10<sup>−6</sup>)</div></div>
+          <div class="card kpi"><div class="num">31,463</div><div class="lab">samples ที่เปรียบเทียบ · 6 sessions · 13 คู่สัญญาณ</div></div>
+          <div class="card small">Generate C code (ert.tlc) → รันบน PC · Back-to-back: PWM, PV, SP, ALLOW · รหัสกรณี SIL-R1…R3, SIL-C1…C3 ไม่ใช่ Requirement R1–R8 · ยังไม่ครอบคลุม Hardware และ Timing</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sub">
+      <h3>PIL: ControlCore บน Mega ใช้เวลาสูงสุดที่วัดได้ 124 µs <span class="chip pil">รันบน Mega / Synthetic input</span></h3>
+      <div class="grid g2">
+        <div class="grid" style="gap:14px">
+          <div class="tscroll" tabindex="0" role="region" aria-label="ตาราง PIL">
+            <table class="t">
+              <thead><tr><th>กรณี</th><th>รายการทดสอบ</th><th class="num">N</th><th class="num">Max|ΔPWM| (count)</th><th class="num">Exec. time สูงสุด</th></tr></thead>
+              <tbody>
+              <tr><td class="id">PIL-R1</td><td>Error เป็นศูนย์ บวก และลบ</td><td class="num">451</td><td class="num">3.66×10<sup>−6</sup></td><td class="num"><b>124 µs</b></td></tr>
+              <tr><td class="id">PIL-R2</td><td>PWM saturation และ recovery</td><td class="num">601</td><td class="num">0</td><td class="num">112 µs</td></tr>
+              <tr><td class="id">PIL-R3</td><td>Stop/restart ด้วย ALLOW</td><td class="num">401</td><td class="num">2.38×10<sup>−5</sup></td><td class="num"><b>124 µs</b></td></tr>
+              <tr><td></td><td><b>รวม</b></td><td class="num"><b>1,453</b></td><td></td><td></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="grid g2">
+            <div class="card kpi"><div class="num">0.062%</div><div class="lab">= 124 µs ÷ Sample period 200 ms · ไม่ใช่ CPU utilization ของ Firmware ทั้งระบบ และไม่ใช่ WCET ที่พิสูจน์แล้ว</div></div>
+            <div class="card kpi"><div class="num">≤ 0.5 count</div><div class="lab">Tolerance = ครึ่งหนึ่งของ PWM resolution <span class="chip note">เสนอหลังได้ผล</span></div></div>
+          </div>
+          <p class="xs muted">PIL-R1…R3 = รหัสกรณีทดสอบ ไม่ใช่ Requirement R1–R3 · double บน ATmega2560 มีขนาด 32 บิตเท่ากับ float · 124 µs ยังไม่รวมเซนเซอร์ I²C, LCD, External Mode และ ISR อื่น</p>
+        </div>
+        <figure><div class="fig"><img class="zoomable" src="assets/images/pil-r3.png" alt="PIL-R3: PWM MIL เทียบ PIL ผลต่าง และ Execution time ต่อ Step" loading="lazy" width="1929" height="1648"></div><figcaption><b>PIL-R3</b> · บน: PWM MIL vs PIL · กลาง: ผลต่าง (×10<sup>−5</sup> count) · ล่าง: Execution time ต่อ Step (µs)</figcaption></figure>
+      </div>
+    </div>
+
+    <div class="sub" id="tank-tests">
+      <h3>ถังจริง: Overshoot/Undershoot ≤ 10% ใน 18 การเปลี่ยน SP <span class="chip hil">HIL ตามนิยามรายวิชา: ทดสอบกับถังจริง</span></h3>
+      <p class="small muted">Arduino Mega + VL53L0X + ปั๊ม + ถังจริง · คอมพิวเตอร์บันทึกข้อมูลผ่าน External Mode · ไม่มี Plant จำลองในวง · Run14/Run16, 30 ต.ค. · โมเดลเวอร์ชัน 1.48</p>
+      <div class="grid g2" style="margin-top:12px">
+        <figure><div class="fig"><img class="zoomable" src="assets/images/run14-up.png" alt="Run14: Step ขึ้น 100 ถึง 300 mm ทีละ 25 mm" loading="lazy" width="1843" height="1357"></div><figcaption><b>Run14 · ขาขึ้น 100→300 mm</b> ทีละ 25 mm · แกน x = เวลานับจากเริ่ม RUN (s) · ภาพนี้มีแผงประกอบอื่น คลิกเพื่อขยายดูทั้งหมด</figcaption></figure>
+        <figure><div class="fig"><img class="zoomable" src="assets/images/run16-down.png" alt="Run16: Step ลง 300 ถึง 100 mm ทีละ 25 mm" loading="lazy" width="1853" height="1257"></div><figcaption><b>Run16 · ขาลง 300→100 mm</b> ทีละ 25 mm · แกน x = เวลานับจากเริ่ม RUN (s) · คลิกเพื่อขยาย</figcaption></figure>
+      </div>
+      <div class="grid g3" style="margin-top:16px">
+        <div class="card kpi"><div class="num">2.40%</div><div class="lab">Overshoot สูงสุด (SP 100) <span class="chip note">ต่างจาก 1.72% ในตารางเทียบ MIL</span></div></div>
+        <div class="card kpi"><div class="num o">9.65%</div><div class="lab">Undershoot สูงสุด · PV (125→100, Run16) · สเกล 90 mm → 10%</div></div>
+        <div class="card kpi"><div class="num">3 mm</div><div class="lab">e<sub>ss</sub> สูงสุดจากสเกล (SP 175, 1.71%) · สเกลไม่ได้ sync กับ PV</div></div>
+      </div>
+      <p class="xs muted" style="margin-top:8px">Run14 คงระดับ ≥ 240 s ได้ 8/9 ระดับ (SP 300 คง 232 s)</p>
+    </div>
+
+    <div class="sub">
+      <h3>กรณีใกล้ขีดจำกัด: Step ลงสู่ 100 mm</h3>
+      <div class="grid g2">
+        <figure><div class="fig"><img class="zoomable" src="assets/images/run16-down.png" alt="Run16 กรณี 125 ไป 100 mm ครั้งแรก (แผงขวาล่างของภาพ)" loading="lazy" width="1853" height="1257"></div><figcaption><b>125→100 ครั้งที่ 1 (Run16)</b> อยู่แผงขวาล่างของภาพ · เวลานับจาก Apply SP 100</figcaption></figure>
+        <figure><div class="fig"><img class="zoomable" src="assets/images/run17-edges.png" alt="Run17: ทดสอบซ้ำ 125 ไป 100 mm และกรณี 300 ไป 100 mm" loading="lazy" width="1859" height="1257"></div><figcaption><b>Run17</b> · ขวาบน: 125→100 ทดสอบซ้ำ · ขวาล่าง: 300→100 · เวลานับจาก Apply SP 100</figcaption></figure>
+      </div>
+      <div class="tscroll" tabindex="0" role="region" aria-label="ตาราง Undershoot" style="margin-top:16px">
+        <table class="t">
+          <thead><tr><th>125→100</th><th class="num">PV ต่ำสุด (หลัง Filter)</th><th class="num">Undershoot จาก PV</th><th class="num">สเกลต่ำสุด (ไม่ sync กับ PV)</th><th class="num">Undershoot จากสเกล</th></tr></thead>
+          <tbody>
+          <tr><td>ครั้งที่ 1 (Run16)</td><td class="num">90.35 mm</td><td class="num"><b>9.65%</b></td><td class="num">90 mm</td><td class="num"><b>10%</b></td></tr>
+          <tr><td>ทดสอบซ้ำ (Run17)</td><td class="num">92.94 mm</td><td class="num">7.06%</td><td class="num">92 mm</td><td class="num">8%</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="grid g3" style="margin-top:16px">
+        <div class="card accent-o kpi"><div class="lab">300→100 · Settling time (แถบ ±5%)</div><div class="num o">223.6 s</div><div class="lab">ผ่านเกณฑ์ปรับปรุง 250 s แต่ไม่ผ่านเกณฑ์เดิม 200 s</div></div>
+        <div class="card small">ระดับลดถึง ≈ 100 mm ใน ≈ 100 s แล้วเข้าแถบอย่างช้า (Ki ต่ำ)</div>
+        <div class="card small"><b>คำสั่ง PWM = 0</b> ภายใน 1 Sample (0.2 s) หลังยืนยัน SP ที่ต่ำกว่า — เป็นหลักฐานของคำสั่ง ไม่ใช่การยืนยันว่าปั๊ม/การไหลหยุดทางกายภาพภายใน 0.2 s</div>
+      </div>
+    </div>
+
+    <div class="sub">
+      <h3>ถังจริงเกิด Undershoot ที่ 100 mm แต่แบบจำลองไม่เกิด</h3>
+      <div class="tscroll" tabindex="0" role="region" aria-label="ตารางเทียบ MIL กับถังจริง">
+        <table class="t wide">
+          <thead><tr><th>ตัวชี้วัด</th><th class="num">MIL (จำลอง)</th><th>ถังจริง</th><th>แหล่งวัด / เงื่อนไข</th><th>เกณฑ์</th></tr></thead>
+          <tbody>
+          <tr><td>125→100 Undershoot</td><td class="num">0%</td><td>9.65% (Run16) · ซ้ำ 7.06% (Run17)</td><td>PV หลัง Filter · สเกล: 10% / 8%</td><td>≤ 10%</td></tr>
+          <tr><td>300→100 Settling time</td><td class="num">181.2 s</td><td>223.6 s (Run17)</td><td>PV · แถบ ±5% · นับจาก Apply SP</td><td>≤ 250 s (เดิม 200 s)</td></tr>
+          <tr><td>Step ขึ้น 25 mm: Overshoot สูงสุด</td><td class="num">0.48%</td><td>1.72% <span class="chip note">หัวข้อถังจริงใช้ 2.40%</span></td><td>PV หลัง Filter</td><td>≤ 10%</td></tr>
+          <tr><td>Steady-state error สูงสุด</td><td class="num">0.38 mm</td><td>3 mm (สเกล)</td><td>MIL: PV จำลอง · ถังจริง: สเกล — ต่างแหล่งวัด</td><td>≤ 5%</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="grid g2" style="margin-top:16px">
+        <div class="card accent"><h4>ข้อสรุปที่รองรับด้วยหลักฐาน</h4><p class="small">ทั้งสองชุดผ่านเกณฑ์ (R3 ตามเกณฑ์ปรับปรุง) · ใช้ผลถังจริงในการตัดสิน</p></div>
+        <div class="card accent-o"><h4>สาเหตุที่เป็นไปได้ (สมมติฐาน ยังไม่ได้ทดสอบ)</h4><p class="small">แบบจำลอง Fit ในช่วง 125–200 mm ไม่ครอบคลุม 100 mm และไม่ได้รวม Disturbance/Noise จากผิวน้ำ</p></div>
+      </div>
+    </div>
+
+    <div class="sub">
+      <h3>ขอบเขตของ PIL และปัจจัยเพิ่มในระบบจริง 4 ด้าน</h3>
+      <p class="small">PIL: ControlCore บน Mega ด้วย Synthetic input → ผลต่าง PWM ≤ 2.38×10<sup>−5</sup> count · ไม่มีเซนเซอร์ ปั๊ม และผิวน้ำในวง · ไม่เทียบ ΔPWM (count) กับความคลาดเคลื่อนระดับ (mm) โดยตรง</p>
+      <div class="grid g4" style="margin-top:12px">
+        <div class="card accent"><h4>Resolution</h4><p class="small">ระยะจากเซนเซอร์ละเอียด 1 mm · PWM ปัดเป็นจำนวนเต็ม 1 count · ต้นฉบับระบุ 1 count ≈ 0.392% duty (= 1/255)</p></div>
+        <div class="card accent"><h4>Accuracy</h4><p class="small">PV เป็นค่าเซนเซอร์หลัง Filter ไม่ใช่การวัดอิสระ · สเกลอ่านด้วยสายตา ไม่ sync กับ PV · ยังไม่มีการวัดอ้างอิงที่จับเวลาคู่กัน</p></div>
+        <div class="card accent"><h4>Noise</h4><p class="small">SD ก่อน Filter 1.47–1.85 mm · SD หลัง Filter 0.38–0.81 mm · PV peak-to-peak ≈ 2.6–3.9 mm</p><p class="xs muted">150 จุดท้ายของ 18 ช่วง (Run14/16) · รวมความแปรปรวนผิวน้ำ</p></div>
+        <div class="card accent"><h4>Delay</h4><p class="small">T<sub>s</sub> 0.2 s · Filter group delay ≈ 0.8 s (95% ใน ≈ 2.8 s) → PV ตอบสนองช้ากว่าระดับจริง</p><p class="xs muted">PIL วัดเฉพาะเวลาคำนวณ 124 µs</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== Standalone ============================== -->
+<section class="sec" id="standalone">
+  <div class="wrap">
+    <div class="sec-head"><div class="kicker">05 · Standalone</div><h2>LCD, Safety interlock และ Standalone</h2><p class="lead">หลักฐานในหัวข้อนี้เป็นการแสดงสถานะบนจอ ภาพนิ่ง และวิดีโอสาธิต ยังไม่เพียงพอยืนยันว่าระบบทำงานโดยไม่พึ่งคอมพิวเตอร์ครบทุกเงื่อนไข (R8) และยังไม่มีบันทึกเอาต์พุต PWM/สถานะปั๊มขณะ Fault (R7)</p></div>
+
+    <div class="grid g4">
+      <figure><div class="fig photo wide"><img class="zoomable" src="assets/images/lcd-ready.jpg" alt="LCD READY · SP 100 / PV 1.1 mm" loading="lazy" width="1400" height="1050"></div><figcaption><b>READY</b> · SP 100 / PV 1.1 mm</figcaption></figure>
+      <figure><div class="fig photo wide"><img class="zoomable" src="assets/images/lcd-run.jpg" alt="LCD RUN · SP 175 / PV 175.4 mm" loading="lazy" width="1400" height="1050"></div><figcaption><b>RUN</b> · SP 175 / PV 175.4 mm</figcaption></figure>
+      <figure><div class="fig photo wide"><img class="zoomable" src="assets/images/lcd-sensor-fault.jpg" alt="LCD SENSOR FAULT · PV −86.9 mm" loading="lazy" width="1400" height="1050"></div><figcaption><b>SENSOR FAULT</b> · PV −86.9 mm</figcaption></figure>
+      <figure><div class="fig photo wide"><img class="zoomable" src="assets/images/lcd-high-level.jpg" alt="LCD HIGH LEVEL · PV 351.7 mm" loading="lazy" width="1400" height="1050"></div><figcaption><b>HIGH LEVEL</b> · PV 351.7 mm</figcaption></figure>
+    </div>
+    <div class="grid g-side" style="margin-top:16px">
+      <div class="tscroll" tabindex="0" role="region" aria-label="ตารางสถานะ Fault">
+        <table class="t">
+          <thead><tr><th>สถานะ</th><th>เงื่อนไข (ในโมเดล)</th><th>PWM command</th></tr></thead>
+          <tbody>
+          <tr><td>SENSOR FAULT</td><td>ระยะไม่อยู่ในช่วง 0 &lt; d ≤ 500 mm</td><td>0 · กลับสู่การควบคุมเมื่อค่าปกติ</td></tr>
+          <tr><td>HIGH LEVEL</td><td>ระดับก่อน Filter (h<sub>m</sub>) ≥ 310 mm</td><td>0 · กลับเมื่อ &lt; 310 mm</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="grid g2">
+        <div class="card accent"><h4>มีหลักฐาน</h4><ul class="pts small"><li>ภาพ LCD แสดง 4 สถานะ (สถานะบนจอ)</li><li>Logic PWM = 0 ผ่าน ALLOW ในโมเดล</li><li>Fault สร้างโดยยก/เอียงฝาเซนเซอร์</li></ul></div>
+        <div class="card dashed" style="border-color:var(--orange)"><h4>ยังขาด</h4><ul class="pts o small"><li>หลักฐาน PWM output และปั๊มหยุดจริงขณะ Fault</li><li>หลักฐานการทำงานโดยไม่เชื่อมต่อ PC (R8)</li></ul></div>
+      </div>
+    </div>
+
+    <!-- ---------- วิดีโอ ---------- -->
+    <div class="sub" id="video">
+      <h3>วิดีโอสาธิตการทำงานจริง</h3>
+      <div class="grid g-side">
+        <div>
+          <div class="video-box" data-video data-title="วิดีโอนำเสนอและสาธิตระบบควบคุมระดับน้ำ (7:48)" data-poster="assets/images/video-poster.jpg">
+            <img class="poster" src="assets/images/video-poster.jpg" alt="" loading="lazy" width="960" height="540">
+            <div class="msg">วิดีโอยังไม่ได้เผยแพร่ออนไลน์<small>ความยาว 7 นาที 48 วินาที · ภาพด้านหลังเป็นภาพนิ่งจากวิดีโอ</small></div>
+          </div>
+          <p class="xs muted" style="margin-top:8px">เครื่องเล่นไม่เล่นอัตโนมัติ และจะโหลดวิดีโอเมื่อกดเล่นเท่านั้น</p>
+        </div>
+        <div class="card">
+          <h4>สิ่งที่วิดีโอแสดง</h4>
+          <ul class="pts small">
+            <li>แนะนำโครงงานและชุดทดลอง พร้อมคำบรรยายภาษาไทยบนภาพ</li>
+            <li>อธิบายเซนเซอร์ VL53L0X ภายในกล่องควบคุม และปั๊ม 12 V DC ในถังพัก</li>
+            <li>อธิบายวงควบคุมแบบ Single loop และบทบาทของ PI</li>
+            <li>สาธิตการเลือก SP และเริ่มควบคุม โดยมีนาฬิกาจับเวลาและจอ LCD ในภาพ</li>
+            <li>สาธิตกรณีระดับน้ำเกิน 310 mm ที่จอแสดง HIGH LEVEL</li>
+          </ul>
+          <p class="xs muted" style="margin-top:10px">คำบรรยายในวิดีโอบอกว่าปั๊มหยุดเมื่อเกิด HIGH LEVEL แต่ภาพไม่มีบันทึกเอาต์พุต PWM หรือการไหลประกอบ และวิดีโอไม่ได้แสดงชัดว่าตัดการเชื่อมต่อคอมพิวเตอร์ทั้งหมด จึงไม่ใช้เป็นหลักฐานยืนยัน R7/R8 ครบ</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ---------- PDF: PV เทียบสเกลจริง ---------- -->
+    <div class="sub" id="pv-ruler">
+      <h3>ข้อมูลประกอบ Standalone: เปรียบเทียบ PV กับสเกลจริง</h3>
+      <div class="grid">
+        <div>
+          <div class="tscroll" tabindex="0" role="region" aria-label="ตารางเทียบ PV กับสเกลจริง">
+            <table class="t" style="min-width:640px">
+              <thead><tr><th>สถานะ</th><th class="num">SP (mm)</th><th class="num">PV บนจอ (mm)</th><th class="num">สเกลจริงโดยประมาณ (mm)</th><th class="num">PV − สเกล (mm)</th><th class="num">สเกล − SP (mm)</th></tr></thead>
+              <tbody>
+              <tr class="sep"><td colspan="6">ก่อนเริ่มควบคุม (ไม่ใช่ผลการควบคุม)</td></tr>
+              <tr><td>READY</td><td class="num">100</td><td class="num">1.1</td><td class="num">≈ 0</td><td class="num">—</td><td class="num">—</td></tr>
+              <tr class="sep"><td colspan="6">ขณะควบคุม (RUN) · ภาพนิ่งทีละระดับ</td></tr>
+              <tr><td>RUN</td><td class="num">100</td><td class="num">101.3</td><td class="num">≈ 102</td><td class="num">≈ −0.7</td><td class="num">≈ +2</td></tr>
+              <tr><td>RUN</td><td class="num">125</td><td class="num">127.8</td><td class="num">≈ 130</td><td class="num">≈ −2.2</td><td class="num">≈ +5</td></tr>
+              <tr><td>RUN</td><td class="num">150</td><td class="num">149.3</td><td class="num">≈ 151</td><td class="num">≈ −1.7</td><td class="num">≈ +1</td></tr>
+              <tr><td>RUN</td><td class="num">175</td><td class="num">175.4</td><td class="num">≈ 175</td><td class="num">≈ +0.4</td><td class="num">≈ 0</td></tr>
+              <tr><td>RUN</td><td class="num">200</td><td class="num">202.0</td><td class="num">≈ 200</td><td class="num">≈ +2.0</td><td class="num">≈ 0</td></tr>
+              <tr><td>RUN</td><td class="num">225</td><td class="num">225.1</td><td class="num">≈ 226</td><td class="num">≈ −0.9</td><td class="num">≈ +1</td></tr>
+              <tr><td>RUN</td><td class="num">250</td><td class="num">251.5</td><td class="num">≈ 251</td><td class="num">≈ +0.5</td><td class="num">≈ +1</td></tr>
+              <tr><td>RUN</td><td class="num">275</td><td class="num">277.3</td><td class="num">≈ 276</td><td class="num">≈ +1.3</td><td class="num">≈ +1</td></tr>
+              <tr><td>RUN</td><td class="num">300</td><td class="num">304.5</td><td class="num">≈ 300</td><td class="num">≈ +4.5</td><td class="num">≈ 0</td></tr>
+              </tbody>
+              <caption>ค่าสเกลจริงอ่านจากขอบบนของแผ่นลูกลอยเทียบไม้บรรทัดข้างถัง มีความคลาดเคลื่อนในการอ่านประมาณ ±3 mm</caption>
+            </table>
+          </div>
+          <div class="note" style="margin-top:14px">
+            <ul class="pts small">
+              <li><b>PV − สเกล</b> = ความต่างระหว่างค่าที่เซนเซอร์แสดงกับระดับที่อ่านจากไม้บรรทัด (ความแม่นของการวัด)</li>
+              <li><b>สเกล − SP</b> = ความต่างระหว่างระดับน้ำจริงกับเป้าหมาย ณ เวลาถ่ายภาพ (ผลการควบคุม ณ ขณะนั้น)</li>
+              <li>ทั้งสองคอลัมน์คำนวณจากค่าโดยประมาณในตาราง จึงมีความไม่แน่นอนอย่างน้อยเท่ากับการอ่านสเกล ±3 mm</li>
+              <li>เป็นภาพนิ่งทีละระดับ ไม่ใช้สรุป Settling time, Overshoot หรือความแม่นยำตลอดช่วงเวลา</li>
+              <li>PDF นี้แสดงจอ LCD และระดับน้ำขณะระบบทำงาน แต่เพียงอย่างเดียวไม่ยืนยันว่าเป็น Standalone ครบทุกเงื่อนไข</li>
+            </ul>
+          </div>
+          <div class="cta" style="display:flex;flex-wrap:wrap;gap:10px;margin-top:14px">
+            <a class="btn" href="assets/documents/pv-vs-ruler-standalone.pdf" target="_blank" rel="noopener">เปิด PDF ฉบับเต็ม</a>
+            <a class="btn ghost" href="assets/documents/pv-vs-ruler-standalone.pdf" download="ตารางเทียบค่า PV กับสเกลจริง.pdf">ดาวน์โหลด PDF (0.9 MB)</a>
+          </div>
+        </div>
+        <div class="grid g3 keep3" style="gap:14px;max-width:720px">
+          <figure><div class="fig"><img class="zoomable" src="assets/images/pdf-ready-sp100.jpg" alt="จาก PDF: READY · SP 100 mm · PV 1.1 mm · สเกล ≈ 0" loading="lazy" width="255" height="740"></div><figcaption>READY · SP 100</figcaption></figure>
+          <figure><div class="fig"><img class="zoomable" src="assets/images/pdf-run-sp200.jpg" alt="จาก PDF: RUN · SP 200 mm · PV 202.0 mm · สเกล ≈ 200" loading="lazy" width="255" height="775"></div><figcaption>RUN · SP 200</figcaption></figure>
+          <figure><div class="fig"><img class="zoomable" src="assets/images/pdf-run-sp300.jpg" alt="จาก PDF: RUN · SP 300 mm · PV 304.5 mm · สเกล ≈ 300" loading="lazy" width="255" height="755"></div><figcaption>RUN · SP 300</figcaption></figure>
+          <p class="xs muted" style="grid-column:1/-1">ครอปจากภาพใน PDF ให้เห็นถัง ไม้บรรทัด และจอ · คลิกเพื่อขยาย</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== 06 สรุป ============================== -->
+<section class="sec" id="summary">
+  <div class="wrap">
+    <div class="sec-head"><div class="kicker">06 · Summary</div><h2>สรุปผล</h2></div>
+    <div class="grid g-side">
+      <div class="card" style="border-top:7px solid var(--green)">
+        <div class="muted">Requirement ที่ผ่าน</div>
+        <div class="rs-big">6<span> / 8</span></div>
+        <div class="grid" style="gap:8px;margin-top:10px">
+          <div><span class="badge ok"><svg class="ic" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="10" fill="#fff"/><path d="M5.5 10.5l3 3 6-7" fill="none" stroke="#1E7F4A" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>R1–R6 ผ่าน</span></div>
+          <div class="xs muted">R3 ผ่านตามเกณฑ์ปรับปรุง 250 s (เกณฑ์เดิม 200 s)</div>
+          <div><span class="chip partial">ผ่านบางส่วน</span> R7</div>
+          <div><span class="chip pending">รอหลักฐาน</span> R8</div>
+        </div>
+      </div>
+      <div class="grid g2">
+        <div class="card"><div class="rs-tag">R2 · ถังจริง</div><div class="rs-v o">9.65%</div><div class="small">Overshoot/Undershoot สูงสุด</div><div class="xs muted">PV, 125→100 · สเกล 10% · เกณฑ์ ≤ 10%</div></div>
+        <div class="card"><div class="rs-tag">R3 · ถังจริง</div><div class="rs-v">223.6 s</div><div class="small">Settling time สูงสุด</div><div class="xs muted">300→100 · เกณฑ์ ≤ 250 s (เดิม 200 s)</div></div>
+        <div class="card"><div class="rs-tag">R4 · ถังจริง</div><div class="rs-v">3 mm</div><div class="small">Steady-state error สูงสุด</div><div class="xs muted">สเกล · 1.71% · เกณฑ์ ≤ 5%</div></div>
+        <div class="card"><div class="rs-tag">R6 · PIL</div><div class="rs-v">124 µs</div><div class="small">ControlCore สูงสุดที่วัดได้</div><div class="xs muted">&lt; T<sub>s</sub> 200 ms · ไม่ใช่ WCET</div></div>
+      </div>
+    </div>
+
+    <div class="sub">
+      <h3>Traceability: Requirement → Test → ผล</h3>
+      <div class="tscroll" tabindex="0" role="region" aria-label="ตาราง Traceability">
+        <table class="t wide">
+          <thead><tr><th>ID</th><th>เกณฑ์</th><th>จำลอง (MIL/SIL/PIL)</th><th>ถังจริง</th><th>ผล</th></tr></thead>
+          <tbody>
+          <tr><td class="id">R1</td><td>100–300 mm ทีละ 25</td><td>MIL 18 กรณี</td><td>18 การเปลี่ยน SP (Run14/16)</td><td><span class="badge ok"><svg class="ic" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="10" fill="#fff"/><path d="M5.5 10.5l3 3 6-7" fill="none" stroke="#1E7F4A" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>ผ่าน</span></td></tr>
+          <tr><td class="id">R2</td><td>Overshoot/Undershoot ≤ 10%</td><td>MIL สูงสุด 0.48%</td><td>Undershoot PV 9.65% · สเกล 10% (ซ้ำ 7.06% / 8%)</td><td><span class="badge ok"><svg class="ic" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="10" fill="#fff"/><path d="M5.5 10.5l3 3 6-7" fill="none" stroke="#1E7F4A" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>ผ่าน</span> <span class="xs muted">ใกล้ขีดจำกัด</span></td></tr>
+          <tr><td class="id">R3</td><td>t<sub>s</sub> ≤ 250 s (±5%)</td><td>MIL 181.2 s</td><td>223.6 s (300→100)</td><td><span class="badge ok"><svg class="ic" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="10" fill="#fff"/><path d="M5.5 10.5l3 3 6-7" fill="none" stroke="#1E7F4A" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>ผ่านเกณฑ์ปรับปรุง</span><div class="xs" style="color:var(--orange-ink)">ไม่ผ่านเกณฑ์เดิม 200 s</div></td></tr>
+          <tr><td class="id">R4</td><td>e<sub>ss</sub> ≤ 5%</td><td>MIL 0.38 mm</td><td>สเกล 3 mm (1.71%)</td><td><span class="badge ok"><svg class="ic" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="10" fill="#fff"/><path d="M5.5 10.5l3 3 6-7" fill="none" stroke="#1E7F4A" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>ผ่าน</span></td></tr>
+          <tr><td class="id">R5</td><td>โค้ดตรงกับโมเดล</td><td>SIL 0 · PIL 2.38×10<sup>−5</sup> count</td><td>–</td><td><span class="badge ok"><svg class="ic" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="10" fill="#fff"/><path d="M5.5 10.5l3 3 6-7" fill="none" stroke="#1E7F4A" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>ผ่าน</span> <span class="xs muted">PIL tol. 0.5 count เสนอหลังได้ผล</span></td></tr>
+          <tr><td class="id">R6</td><td>ControlCore &lt; T<sub>s</sub></td><td>PIL 124 µs (สูงสุดที่วัดได้)</td><td>–</td><td><span class="badge ok"><svg class="ic" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="10" fill="#fff"/><path d="M5.5 10.5l3 3 6-7" fill="none" stroke="#1E7F4A" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>ผ่านในกรณีที่ทดสอบ</span> <span class="xs muted">ไม่ใช่ WCET</span></td></tr>
+          <tr><td class="id">R7</td><td>PWM = 0 เมื่อ Fault</td><td>Logic ในโมเดล</td><td>LCD แสดงสถานะ Fault</td><td><span class="chip partial">ผ่านบางส่วน</span></td></tr>
+          <tr><td class="id">R8</td><td>ไม่เชื่อมต่อ PC</td><td>–</td><td>ยังไม่มีหลักฐานยืนยัน</td><td><span class="chip pending">รอหลักฐาน</span></td></tr>
+          </tbody>
+          <caption>t<sub>s</sub> ปรับจาก 200 s หลังทดสอบถังจริง · PIL tolerance เสนอหลังได้ผล · MIL ประเมินด้วยนิยามเดียวกับถังจริง · รหัสกรณี SIL/PIL ไม่ใช่ R1–R8</caption>
+        </table>
+      </div>
+    </div>
+
+    <div class="sub">
+      <h3>ข้อจำกัดหลักและงานถัดไป</h3>
+      <div class="grid g3">
+        <div class="card"><h4>1 · หลักฐาน R7 / R8</h4><p class="small">มีภาพ LCD แสดงสถานะ และ Logic PWM = 0 ในโมเดล</p><p class="small" style="border-top:1px solid var(--line);padding-top:8px;margin-top:8px"><b>งานถัดไป:</b> ทดสอบ Fault พร้อมบันทึก PWM output และสถานะปั๊ม · บันทึกวิดีโอ Standalone ตั้งแต่เปิดเครื่อง</p></div>
+        <div class="card"><h4>2 · การวัดอ้างอิง</h4><p class="small">PV คือค่าเซนเซอร์หลัง Filter · ค่าสเกลอ่านด้วยตาโดยไม่ได้บันทึกเวลาคู่กับ PV</p><p class="small" style="border-top:1px solid var(--line);padding-top:8px;margin-top:8px"><b>งานถัดไป:</b> เพิ่มการวัดอ้างอิงที่บันทึกเวลาคู่กับ PV (เช่น ภาพสเกลพร้อม Timestamp)</p></div>
+        <div class="card"><h4>3 · ช่วงความแม่นของแบบจำลอง</h4><p class="small">แม่นที่สุดช่วง 125–200 mm · ยังไม่จำลอง Undershoot ที่ 100 mm</p><p class="small" style="border-top:1px solid var(--line);padding-top:8px;margin-top:8px"><b>งานถัดไป:</b> ปรับแบบจำลองช่วงระดับต่ำด้วยข้อมูลถังจริง แล้ว Cross-validate</p></div>
+      </div>
+      <p class="xs muted" style="margin-top:10px">นอกขอบเขตงานนี้: การปรับ Ki หรือ Filter เพื่อลด Undershoot และ t<sub>s</sub> ขาลง ต้องทดสอบใหม่ทั้งชุด — ยังไม่ได้ทำ</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== ทีมและแผนงาน ============================== -->
+<section class="sec" id="team">
+  <div class="wrap">
+    <div class="sec-head"><div class="kicker">Team &amp; Timeline</div><h2>ทีมและแผนงาน</h2><p class="lead">การแบ่งหน้าที่หลักของทีม</p></div>
+    <div class="grid g3">
+      <div class="card member"><div class="av" aria-hidden="true">น</div><div class="nm">นายนฤพนธ์ บุญมาก</div><div class="xs muted">รหัสนักศึกษา 68015089</div><div class="role">ซอฟต์แวร์และระบบควบคุม</div><p class="small">พัฒนา MATLAB/Simulink ออกแบบและปรับค่าตัวควบคุม PI พัฒนาโปรแกรม Arduino และวิเคราะห์ผลการควบคุม</p></div>
+      <div class="card member" style="border-top-color:var(--orange)"><div class="av" aria-hidden="true" style="background:var(--tint-orange);color:var(--orange-ink)">พ</div><div class="nm">นายพงศ์พิศาล ชิวสกุล</div><div class="xs muted">รหัสนักศึกษา 68015124</div><div class="role">ฮาร์ดแวร์และการประกอบระบบ</div><p class="small">จัดเตรียมและประกอบชุดถังน้ำ ปั๊มน้ำ เซนเซอร์ และวงจรควบคุม ตรวจสอบการต่อสายและทดสอบอุปกรณ์</p></div>
+      <div class="card member" style="border-top-color:var(--navy)"><div class="av" aria-hidden="true" style="background:#E6E9F2;color:var(--navy)">จ</div><div class="nm">น.ส.จุฑามาศ คำรณ</div><div class="xs muted">รหัสนักศึกษา 68015028</div><div class="role">รายงานและการนำเสนอ</div><p class="small">รวบรวมข้อมูลและผลการทดลอง จัดทำรายงาน จัดทำสไลด์ และเรียบเรียงเนื้อหานำเสนอ</p></div>
+    </div>
+    <p class="callout" style="margin-top:16px">สมาชิกทุกคนร่วมวางแผน ทดสอบระบบ วิเคราะห์ปัญหา และเตรียมตอบคำถาม</p>
+
+    <div class="sub">
+      <h3>แผนดำเนินงานเบื้องต้น</h3>
+      <div class="tscroll" tabindex="0" role="region" aria-label="แผนดำเนินงานเบื้องต้น">
+        <div class="gantt" role="table" aria-label="แผนดำเนินงานรายสัปดาห์">
+          <div class="hd" role="columnheader">งาน</div><div class="hd" role="columnheader">สัปดาห์ 1</div><div class="hd" role="columnheader">สัปดาห์ 2</div><div class="hd" role="columnheader">สัปดาห์ 3</div><div class="hd" role="columnheader">สัปดาห์ 4</div>
+          <div class="task" role="rowheader">ศึกษาข้อมูลและวางแผนร่วมกัน <span class="xs muted">สัปดาห์ 1</span></div><div class="cell on first last" role="cell"><i aria-label="มีงาน"></i></div><div class="cell" role="cell"><i></i></div><div class="cell" role="cell"><i></i></div><div class="cell" role="cell"><i></i></div>
+          <div class="task" role="rowheader">พัฒนาแบบจำลองและโปรแกรมควบคุม <span class="xs muted">สัปดาห์ 1–2</span></div><div class="cell on first" role="cell"><i aria-label="มีงาน"></i></div><div class="cell on last" role="cell"><i aria-label="มีงาน"></i></div><div class="cell" role="cell"><i></i></div><div class="cell" role="cell"><i></i></div>
+          <div class="task" role="rowheader">ประกอบและตรวจสอบฮาร์ดแวร์ <span class="xs muted">สัปดาห์ 1–2</span></div><div class="cell on first hw" role="cell"><i aria-label="มีงาน"></i></div><div class="cell on last hw" role="cell"><i aria-label="มีงาน"></i></div><div class="cell" role="cell"><i></i></div><div class="cell" role="cell"><i></i></div>
+          <div class="task" role="rowheader">เชื่อมต่อระบบและทดสอบร่วมกัน <span class="xs muted">สัปดาห์ 3</span></div><div class="cell" role="cell"><i></i></div><div class="cell" role="cell"><i></i></div><div class="cell on first last hw" role="cell"><i aria-label="มีงาน"></i></div><div class="cell" role="cell"><i></i></div>
+          <div class="task" role="rowheader">รวบรวมผลและจัดทำรายงาน <span class="xs muted">สัปดาห์ 2–4</span></div><div class="cell" role="cell"><i></i></div><div class="cell on first" role="cell"><i aria-label="มีงาน"></i></div><div class="cell on" role="cell"><i aria-label="มีงาน"></i></div><div class="cell on last" role="cell"><i aria-label="มีงาน"></i></div>
+          <div class="task" role="rowheader">จัดทำสไลด์และซ้อมนำเสนอ <span class="xs muted">สัปดาห์ 4</span></div><div class="cell" role="cell"><i></i></div><div class="cell" role="cell"><i></i></div><div class="cell" role="cell"><i></i></div><div class="cell on first last" role="cell"><i aria-label="มีงาน"></i></div>
+        </div>
+      </div>
+      <p class="note o" style="margin-top:12px">แผนเบื้องต้น ไม่ใช่บันทึกวันทำงานจริง</p>
+    </div>
+
+    <div class="sub">
+      <h3>การจัดเก็บไฟล์และเวอร์ชัน</h3>
+      <div class="grid g2">
+        <div class="card">
+          <h4>ชุดไฟล์โครงงาน</h4>
+          <dl class="filebox small">
+            <dt>ชุดส่งมอบ</dt><dd>WaterLevel_Project_2026-10-31_v1.0.zip</dd>
+            <dt>วันที่จัดชุด</dt><dd>31 ตุลาคม 2026</dd>
+            <dt>เวอร์ชันชุดไฟล์</dt><dd>v1.0</dd>
+            <dt>แบ่งเป็น</dt><dd>โปรแกรม / ฮาร์ดแวร์ / ผลการทดลอง</dd>
+          </dl>
+          <p class="small" style="margin-top:12px">ชื่อชุดไฟล์ระบุวันที่และเวอร์ชัน พร้อมรายการไฟล์ต้นทาง</p>
+          <p class="xs muted" style="margin-top:6px">วันที่จัดชุดไม่ใช่วันที่ทำการทดลอง</p>
+          <a class="btn" style="margin-top:12px" data-project-zip hidden href="#" rel="noopener">ดาวน์โหลดชุดไฟล์โครงงาน</a>
+        </div>
+        <div class="card">
+          <h4>เว็บไซต์นี้</h4>
+          <dl class="filebox small">
+            <dt>เวอร์ชันเว็บไซต์</dt><dd data-site-version>เว็บไซต์ v1.0 · 1 พฤศจิกายน 2026</dd>
+            <dt>การเผยแพร่</dt><dd>GitHub Pages</dd>
+          </dl>
+          <p class="xs muted" style="margin-top:10px">เวอร์ชันเว็บไซต์แยกจากเวอร์ชันชุดไฟล์โครงงาน · เว็บไซต์มีเฉพาะภาพ กราฟ และเอกสารที่ใช้ในหน้านี้ ไม่ได้รวมชุดข้อมูลทั้งหมด</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="site">
+  ระบบควบคุมระดับน้ำด้วย PI · Arduino Mega 2560 + MATLAB/Simulink · รายวิชา Control System Analysis and Design<br>
+  <span data-site-version>เว็บไซต์ v1.0 · 1 พฤศจิกายน 2026</span> · ฟอนต์ Kanit และ Sarabun (SIL Open Font License)
+</footer>
+
+<button class="totop" id="totop" type="button" aria-label="กลับด้านบน">↑</button>
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="ภาพขยาย"><button class="x" type="button" aria-label="ปิด">×</button><img alt=""><div class="cap"></div></div>
+</body>
+</html>
