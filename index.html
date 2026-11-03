@@ -458,7 +458,40 @@ table.t tr.grp td { background: var(--tint) !important; font-family: var(--font-
 .navui .cnt { min-width: 74px; text-align: center; font-size: 15px; letter-spacing: .04em; }
 @media (max-width: 700px) { .navui { bottom: 6px; } .navui button { width: 44px; height: 44px; } .hud, .anim-btn { display: none; } }
 @media (max-height: 520px) { .hud, .anim-btn { display: none; } .navui { bottom: 4px; padding: 2px 6px; } .navui button { width: 36px; height: 36px; } }
-@media print { .navui { display: none !important; } }</style>
+@media print { .navui { display: none !important; } }
+/* Native Simulink model slides */
+.sm-overview { display:grid;grid-template-columns:1200px 1fr;gap:28px;align-items:stretch; }
+.sm-diagram { display:flex;flex-direction:column;justify-content:space-between;padding:22px 20px;min-width:0; }
+.sm-imagehead { font-family:var(--font-head);font-size:26px;font-weight:500;color:var(--navy);display:flex;justify-content:space-between;align-items:center; }
+.sm-imagehead span { font-family:var(--font-body);font-size:19px;font-weight:400;color:var(--muted); }
+.sm-full { position:relative;display:block;line-height:0; }
+.sm-full img { width:100%;height:auto;display:block; }
+.sm-pin { position:absolute;display:grid;place-items:center;width:40px;height:40px;border:3px solid white;border-radius:50%;background:var(--orange);color:white;font:600 25px/1 var(--font-head);box-shadow:0 2px 9px #1b244033; }
+.sm-caption { font-size:20px;color:var(--muted);line-height:1.4; }
+.sm-groups { display:grid;grid-template-rows:repeat(4,1fr);gap:16px; }
+.sm-group { display:flex;align-items:center;gap:18px;padding:20px 22px; }
+.sm-number { flex:none;display:grid;place-items:center;width:42px;height:42px;background:var(--blue);color:white;border-radius:50%;font:500 26px/1 var(--font-head); }
+.sm-group h3 { margin:0 0 6px;font-size:27px; }
+.sm-group p { font-size:23px;line-height:1.45;margin:0; }
+.sm-group a { color:var(--blue);text-decoration:underline;text-underline-offset:4px; }
+.sm-core { display:grid;grid-template-columns:1060px 1fr;grid-template-rows:1fr 68px;gap:20px 28px; }
+.sm-core-main { padding:22px 24px;display:flex;flex-direction:column;justify-content:space-between;min-height:0; }
+.sm-core-image { display:block; }
+.sm-core-image img { display:block;width:100%;height:auto;max-height:500px;object-fit:contain; }
+.sm-core-flow { display:flex;align-items:center;justify-content:center;gap:12px;font:500 21px/1.4 var(--font-head);color:var(--blue);padding-top:14px; }
+.sm-core-flow span { background:#edf1f9;padding:9px 12px;border-radius:8px;white-space:nowrap; }
+.sm-core-side { display:grid;grid-template-rows:390px 1fr;gap:18px;min-height:0; }
+.sm-pi-card { padding:18px 24px; }
+.sm-pi-card h3,.sm-pwm-card h3 { margin:0 0 10px;font-size:27px; }
+.sm-pi-card img { display:block;width:100%;height:220px;object-fit:contain; }
+.sm-gains { display:flex;justify-content:space-between;font-size:24px;margin-top:10px; }
+.sm-gains b { color:var(--blue);margin-left:6px; }
+.sm-mini { font-size:20px;color:var(--muted);margin:10px 0 0; }
+.sm-pwm-card { padding:18px 24px; }
+.sm-code { font:22px/1.6 Consolas,monospace;color:var(--navy);white-space:pre-wrap; }
+.sm-interlock { grid-column:1/-1;display:flex;align-items:center;justify-content:center;gap:14px;background:#fff1e8;border-left:5px solid var(--orange);padding:12px 20px;border-radius:8px;font-size:23px; }
+
+</style>
 </head>
 <body>
 <div class="deck-viewport">
@@ -547,7 +580,7 @@ table.t tr.grp td { background: var(--tint) !important; font-family: var(--font-
     <div class="team-note">สมาชิกทุกคนร่วมวางแผน ทดสอบระบบ วิเคราะห์ปัญหา และเตรียมตอบคำถาม</div>
   </div>
   <div class="ftitle">ระบบควบคุมระดับน้ำด้วย PI</div>
-  <div class="pg">02 / 34</div>
+  <div class="pg">02 / 36</div>
   <aside class="notes">สมาชิกกลุ่มสามคนแบ่งหน้าที่หลักดังนี้ นายนฤพนธ์ บุญมาก รหัส 68015089 ดูแลซอฟต์แวร์และระบบควบคุม ได้แก่ MATLAB/Simulink การออกแบบและปรับค่า PI โปรแกรม Arduino และการวิเคราะห์ผลการควบคุม นายพงศ์พิศาล ชิวสกุล รหัส 68015124 ดูแลฮาร์ดแวร์และการประกอบระบบ ได้แก่ ชุดถังน้ำ ปั๊ม เซนเซอร์ และวงจรควบคุม รวมถึงตรวจการต่อสายและทดสอบอุปกรณ์ น.ส.จุฑามาศ คำรณ รหัส 68015028 ดูแลรายงานและการนำเสนอ ได้แก่ รวบรวมข้อมูลและผลการทดลอง จัดทำรายงานและสไลด์ ทั้งนี้สมาชิกทุกคนร่วมวางแผน ทดสอบระบบ วิเคราะห์ปัญหา และเตรียมตอบคำถาม เป็นการแบ่งหน้าที่หลัก ไม่ใช่บันทึกการทำงานรายชิ้น</aside>
 </section>
 
@@ -587,7 +620,7 @@ table.t tr.grp td { background: var(--tint) !important; font-family: var(--font-
     <div class="ag-legend"><span><i class="dot nv"></i>ภาพรวม</span><span><i class="dot sim"></i>แบบจำลอง / ผลจำลอง</span><span><i class="dot hw"></i>ฮาร์ดแวร์และถังจริง</span><span><i class="dot mix"></i>จากจำลองสู่ฮาร์ดแวร์</span></div>
   </div>
   <div class="ftitle">ระบบควบคุมระดับน้ำด้วย PI</div>
-  <div class="pg">03 / 34</div>
+  <div class="pg">03 / 36</div>
   <aside class="notes">การนำเสนอแบ่งเป็นหกส่วน ได้แก่ โจทย์และ Requirement, ฮาร์ดแวร์และชุดทดลอง, การหาค่าพารามิเตอร์ของแบบจำลองจาก LAB1 ถึง LAB5, การออกแบบและปรับจูน PI, ผลการทดสอบตาม V-Model คือ MIL, SIL, PIL, การทดสอบกับถังจริง และ Standalone และส่วนสรุป ซึ่งประกอบด้วย Traceability ทีมและแผนงาน และวิดีโอสาธิต สีของแต่ละหัวข้อใช้หลักเดียวกับทั้งเด็ค คือฟ้าแทนงานแบบจำลองและผลจำลอง ส้มแทนฮาร์ดแวร์และถังจริง</aside>
 </section>
 
@@ -675,7 +708,7 @@ table.t tr.grp td { background: var(--tint) !important; font-family: var(--font-
     </div>
   </div>
   <div class="ftitle">ระบบควบคุมระดับน้ำด้วย PI</div>
-  <div class="pg">04 / 34</div>
+  <div class="pg">04 / 36</div>
   <aside class="notes">โจทย์คือควบคุมระดับน้ำในถังให้เท่ากับ Setpoint ในช่วง 100 ถึง 300 มิลลิเมตร ผู้ใช้เลือก Setpoint ทีละ 25 มิลลิเมตรด้วยปุ่ม SP+ และ SP− แล้วกด Start เพื่อยืนยัน ประเด็นสำคัญคือปั๊มเติมน้ำได้ทิศทางเดียว เมื่อ Setpoint ลดลงและเอาต์พุต PI ไม่เกินศูนย์ คำสั่ง PWM เป็นศูนย์ ระดับจึงเริ่มลดลงจากน้ำที่ไหลออกทางท่อ และเมื่อระดับเข้าใกล้ Setpoint ใหม่ PI จะกลับมาสั่งปั๊ม ผลตอบสนองช่วงเพิ่มระดับและลดระดับจึงไม่สมมาตร ในภาพ d คือระยะที่เซนเซอร์วัดจากใต้ฝาถึงผิวน้ำ และ h คือระดับน้ำที่ได้จากการแปลง d ด้วย Lookup Table การคำนวณควบคุมทั้งหมดเกิดขึ้นบน Arduino ส่วนคอมพิวเตอร์ใช้แสดงผลและบันทึกข้อมูลผ่าน External Mode เท่านั้น
 [แอนิเมชัน — เล่นวนเอง] ปั๊มเริ่มทำงาน Qin ไหลเข้า ระดับน้ำเพิ่ม เซนเซอร์ VL53L0X ยิงพัลส์ลงผิวน้ำและแสดง PV ตามระดับ เมื่อใกล้ SP ปั๊มลดกำลังจน Qin เท่ากับ Qout ระดับนิ่งที่ SP จากนั้นปั๊มหยุดและน้ำไหลออกเองทางท่อ ระดับลดลงแล้วเริ่มรอบใหม่ ช่วงลดระดับในแอนิเมชันเร่งเวลาให้เร็วขึ้น ตัวเลขในแอนิเมชันเป็นภาพแนวคิด ไม่ใช่ผลทดลอง
 [หมายเหตุท้ายสไลด์เดิม — ประเด็น] Actuator เติมน้ำได้ทางเดียว → ผลตอบสนองขาเพิ่มระดับกับขาลดระดับไม่สมมาตร · แอนิเมชันด้านขวาเป็นภาพแนวคิด ไม่ใช่สเกลจริง (SP 200 mm เป็นค่าตัวอย่างในช่วง 100–300 mm)</aside>
@@ -711,7 +744,7 @@ table.t tr.grp td { background: var(--tint) !important; font-family: var(--font-
     </div>
   </div>
   <div class="ftitle">ระบบควบคุมระดับน้ำด้วย PI</div>
-  <div class="pg">05 / 34</div>
+  <div class="pg">05 / 36</div>
   <aside class="notes">ตารางนี้แสดง Requirement ทั้งแปดข้อ R1 ถึง R4 เป็นสมรรถนะการควบคุม ได้แก่ ช่วง Setpoint, Overshoot และ Undershoot ไม่เกินร้อยละ 10 ของ Setpoint ปลายทาง, Settling time และ Steady-state error ไม่เกินร้อยละ 5 R5 และ R6 เกี่ยวกับความสอดคล้องของโค้ดกับโมเดล และ Execution time เทียบกับ Sample time R7 และ R8 เป็น Safety interlock และการทำงานโดยไม่เชื่อมต่อคอมพิวเตอร์
 นิยาม: Overshoot และ Undershoot คิดเป็นร้อยละของ Setpoint ปลายทาง โดยใช้ PV หลัง Filter เป็นหลัก และรายงานค่าจากสเกลแยกไว้ Settling time ใช้แถบ ±5% เริ่มนับเมื่อ Setpoint ใหม่ถูก Apply Steady-state error ของถังจริงใช้ค่าที่ผู้ทดลองอ่านจากสเกลช่วงท้ายของแต่ละระดับ ซึ่งไม่ได้จับเวลาคู่กับ PV
 [หมายเหตุท้ายสไลด์เดิม — หมายเหตุ] ผลเทียบเกณฑ์แต่ละข้ออยู่ในหน้า Traceability</aside>
@@ -793,7 +826,7 @@ table.t tr.grp td { background: var(--tint) !important; font-family: var(--font-
     </div>
   </div>
   <div class="ftitle">ระบบควบคุมระดับน้ำด้วย PI</div>
-  <div class="pg">06 / 34</div>
+  <div class="pg">06 / 36</div>
   <aside class="notes">[หน้านี้เปิดทีละขั้น 9 ขั้น: กด → / Space / คลิก] การพัฒนาเป็นไปตาม V-Model ฝั่งซ้ายคือการออกแบบ เริ่มจาก Requirement สร้างแบบจำลอง Plant จากข้อมูล LAB2 ออกแบบ PI บนแบบจำลอง และ Generate C code จากโมเดล Simulink ฝั่งขวาคือการทวนสอบที่จับคู่กับแต่ละขั้น: MIL ทวนสอบการออกแบบ PI บนแบบจำลอง, SIL ตรวจว่าโค้ด C ที่รันบนคอมพิวเตอร์ให้ผลเท่าโมเดล, PIL รันโค้ดบน Arduino Mega จริงโดยใช้ Synthetic input, การทดสอบกับถังน้ำจริงซึ่งเชื่อมต่อเซนเซอร์ ปั๊ม และถังจริง โดยไม่มี Plant จำลองในวง และ Standalone ซึ่งกล่องควบคุมทำงานโดยไม่เชื่อมต่อคอมพิวเตอร์ สำหรับ Standalone มีหลักฐานเป็นวิดีโอสาธิตที่ทำงานโดยไม่เชื่อมต่อคอมพิวเตอร์ และ PDF เทียบค่า PV กับสเกลจริง สีฟ้าแทนผลจำลอง สีส้มแทนฮาร์ดแวร์จริง และ PIL แยกออกมาเพราะใช้บอร์ดจริงแต่ input ยังสังเคราะห์</aside>
 </section>
 
@@ -826,7 +859,7 @@ table.t tr.grp td { background: var(--tint) !important; font-family: var(--font-
     </div>
   </div>
   <div class="ftitle">ระบบควบคุมระดับน้ำด้วย PI</div>
-  <div class="pg">07 / 34</div>
+  <div class="pg">07 / 36</div>
   <aside class="notes">ชุดทดลองประกอบด้วย ถังทดสอบอะคริลิก 100 × 100 × 500 มิลลิเมตร, สเกลด้านข้างสำหรับอ่านค่าอ้างอิง วาล์วและท่อน้ำออก ถังพักน้ำ 10 ลิตรซึ่งมีปั๊มจุ่มอยู่ภายใน กล่องควบคุมที่บรรจุ Arduino Mega 2560 ประมวลผล PI ด้วย Sample time 0.2 วินาที และ แหล่งจ่ายไฟ เซนเซอร์ VL53L0X ติดตั้งใต้ฝาถังและสื่อสารผ่าน I2C ปั๊ม 12 โวลต์ขับด้วยโมดูล IRF520 ผ่าน PWM ขา D5 บอร์ดรับไฟจาก DC-DC 7 โวลต์ ช่วง 0 ถึง 500 มิลลิเมตรเป็นช่วงที่โปรแกรมใช้ตรวจว่าค่าระยะผิดปกติหรือไม่ ไม่ใช่สเปกของเซนเซอร์
 [หมายเหตุท้ายสไลด์เดิม — อ้างอิง] วงจร Water_Level_Schematic_R03 · LCD ในภาพ: SP 150 mm, PV 148.5 mm, STATE RUN</aside>
 </section>
@@ -862,7 +895,7 @@ table.t tr.grp td { background: var(--tint) !important; font-family: var(--font-
     </table>
   </div>
   <div class="ftitle">ระบบควบคุมระดับน้ำด้วย PI</div>
-  <div class="pg">08 / 34</div>
+  <div class="pg">08 / 36</div>
   <aside class="notes">ภาพนี้แสดงกล่องควบคุม ด้านหน้าประกอบด้วยจอ LCD2004 ปุ่ม SP+ และ SP− สำหรับเลือก Setpoint และปุ่ม Start/Reset ภายในกล่องมี Arduino Mega 2560 โมดูล DC-DC ที่จ่ายไฟ 7 โวลต์เข้าขา VIN ผ่านไดโอด 1N4007 และโมดูล IRF520 สำหรับขับปั๊ม ด้านหลังฝากล่องเป็นจอ LCD พร้อมบอร์ด I2C และสายของปุ่มกด Pin assignment: D5 เป็น PWM ไปยัง IRF520, D20 และ D21 เป็น SDA และ SCL ของบัส I2C, D22 ถึง D24 เป็นปุ่ม
 [หมายเหตุท้ายสไลด์เดิม — อ้างอิง] Water_Level_Schematic_R03</aside>
 </section>
@@ -890,7 +923,7 @@ table.t tr.grp td { background: var(--tint) !important; font-family: var(--font-
     <div class="small"><b>ระยะ <i class="v">d</i> ≠ ระดับ <i class="v">h</i></b> — เซนเซอร์วัดระยะ <i class="v">d</i> จากฝาลงผิวน้ำ แล้วแปลงเป็นระดับ <i class="v">h</i><sub>m</sub> ด้วย Lookup Table ก่อนเข้า Filter (หน้า 10)</div>
   </div>
   <div class="ftitle">ระบบควบคุมระดับน้ำด้วย PI</div>
-  <div class="pg">09 / 34</div>
+  <div class="pg">09 / 36</div>
   <aside class="notes">ภาพซ้ายคือเซนเซอร์ VL53L0X ซึ่งติดตั้งใต้ฝาถัง ใช้หลักการ Time-of-Flight ยิงแสงอินฟราเรดไปยังผิวน้ำและวัดเวลาที่แสงสะท้อนกลับ ได้ระยะ d จากฝาถึงผิวน้ำ จากนั้นแปลงเป็นระดับน้ำด้วย Lookup Table ภาพกลางคือปั๊ม AW500S 12 โวลต์ซึ่งจุ่มอยู่ในถังพัก ค่า 800 ลิตรต่อชั่วโมงเป็นค่าสูงสุดตามสเปกผู้ผลิต ไม่ใช่อัตราไหลที่วัดได้ในระบบนี้ ภาพขวาคือฐานถังทดสอบ น้ำไหลออกผ่านวาล์วและท่อกลับสู่ถังพัก พารามิเตอร์ที่ fit ได้จึงแทนพฤติกรรมรวมของปั๊ม ท่อ และวาล์วทั้งชุด
 [หมายเหตุท้ายสไลด์เดิม — ข้อควรรู้] พารามิเตอร์ที่ Fit ได้แทนพฤติกรรมรวมของปั๊ม ท่อ วาล์ว และทางระบายทั้งชุด</aside>
 </section>
@@ -978,10 +1011,67 @@ table.t tr.grp td { background: var(--tint) !important; font-family: var(--font-
     </div>
   </div>
   <div class="ftitle">ระบบควบคุมระดับน้ำด้วย PI</div>
-  <div class="pg">10 / 34</div>
+  <div class="pg">10 / 36</div>
   <aside class="notes">ระบบเป็น Single-loop feedback control ไม่ใช่ Cascade control [กด → ทีละขั้น] ขั้นแรกคือเส้นทางไปข้างหน้า: เมื่อผู้ใช้ยืนยัน Setpoint จุดรวมจะคำนวณ Error เท่ากับ SP ลบ PV ส่งเข้า PI จากนั้นแปลงเป็นคำสั่ง PWM หน่วย count โดยบวก Bias 38.5 เมื่อเอาต์พุต PI มากกว่าศูนย์ และเป็นศูนย์เมื่อ PI ไม่เกินศูนย์ ผ่านเงื่อนไข ALLOW ของ Interlock แล้วจึงขับปั๊มผ่าน IRF520 ขั้นที่สองคือ Plant: ปั๊มเติมน้ำเข้าถัง ได้ระดับจริง h ขั้นที่สามคือการวัดและป้อนกลับ: VL53L0X วัดระยะ d แปลงเป็นระดับ hm ด้วย Lookup Table แล้วผ่าน Low-pass filter แบบ Discrete PV[k] = 0.2 hm[k] + 0.8 PV[k−1] จากนั้น PV ป้อนกลับเข้าจุดรวมด้วยเครื่องหมายลบ ขั้นสุดท้าย กรอบสีน้ำเงินคือส่วนที่ประมวลผลบน Arduino ด้วย Sample time 0.2 วินาที กรอบสีส้มคืออุปกรณ์จริง และ PC ใช้แสดงผลและบันทึกข้อมูลผ่าน External Mode เท่านั้น
 [หมายเหตุท้ายสไลด์เดิม — หมายเหตุ] Single loop ไม่ใช่ Cascade · ALLOW = 0 เมื่อ 0 < d ≤ 500 mm ไม่เป็นจริง หรือ hm ≥ 310 mm</aside>
 </section>
+
+<!-- Simulink model: native MATLAB diagram exports -->
+<section class="slide" data-section="2" data-editable>
+  <div class="secbar" aria-hidden="true"><span><b>01</b>โจทย์และ Requirement</span><span class="on"><b>02</b>ฮาร์ดแวร์และชุดทดลอง</span><span><b>03</b>แบบจำลองและพารามิเตอร์</span><span><b>04</b>ออกแบบและจูน PI</span><span><b>05</b>ทดสอบตาม V-Model</span><span><b>06</b>สรุปผลและทีม</span></div>
+  <div class="hdr"><div class="kicker">Simulink Model · Overview</div><div class="title">Simulink Model: ภาพรวมระบบที่ใช้จริง</div></div>
+  <div class="rule"></div>
+  <div class="body sm-overview">
+    <div class="sm-diagram card">
+      <div class="sm-imagehead">Top-level Model <span>คลิกภาพเพื่อเปิดขนาดเต็ม</span></div>
+      <a class="sm-full" href="assets/simulink/model_overview.png" target="_blank" rel="noopener" aria-label="เปิดภาพรวม Simulink Model ขนาดเต็ม">
+        <img src="assets/simulink/model_overview.png" alt="โมเดลจริง แสดง Digital Input, PanelLogic, Real, LCD2004 และ Scope">
+        <span class="sm-pin" style="left:6%;top:68%;">1</span>
+        <span class="sm-pin" style="left:21%;top:76%;">2</span>
+        <span class="sm-pin" style="left:52%;top:54%;">3</span>
+        <span class="sm-pin" style="left:73%;top:10%;">4</span>
+      </a>
+      <div class="sm-caption">ภาพส่งออกจาก Simulink Model จริง · การคำนวณควบคุมอยู่บน Arduino Mega</div>
+    </div>
+    <div class="sm-groups">
+      <div class="card sm-group"><b class="sm-number">1</b><div><h3>Digital Input</h3><p>รับปุ่ม SP+ / SP− / Start<br>D22 · D23 · D24</p></div></div>
+      <div class="card sm-group"><b class="sm-number">2</b><div><h3>PanelLogic</h3><p>จัดการ Setpoint และ RUN<br>เลือกค่า → กด Start ยืนยัน</p></div></div>
+      <div class="card sm-group"><b class="sm-number">3</b><div><h3>Real Subsystem</h3><p>เซนเซอร์ · ControlCore · PWM<br><a href="assets/simulink/real_subsystem.png" target="_blank" rel="noopener">เปิดภาพภายใน Real ↗</a></p></div></div>
+      <div class="card sm-group"><b class="sm-number">4</b><div><h3>LCD2004 / Scope</h3><p>แสดง SP, PV และสถานะ<br>ติดตามสัญญาณการทำงาน</p></div></div>
+    </div>
+  </div>
+  <div class="ftitle">ระบบควบคุมระดับน้ำด้วย PI</div><div class="pg">11 / 36</div>
+  <aside class="notes">จากวงควบคุมหน้าที่แล้ว หน้านี้คือ Simulink Model ที่ใช้จริงครับ ผมแบ่งให้ดูเป็นสี่ส่วน เริ่มจาก Digital Input รับค่าจากปุ่ม ส่งเข้า PanelLogic เพื่อจัดการ Setpoint และ RUN จากนั้นส่งเข้า Real ซึ่งภายในมีเซนเซอร์ ControlCore และ PWM ส่วน LCD2004 ใช้แสดง Setpoint, PV และสถานะ และ Scope ใช้ดูสัญญาณครับ เดี๋ยวหน้าถัดไปจะเปิดเข้าไปดูส่วน ControlCore ครับ</aside>
+</section>
+
+<section class="slide" data-section="2" data-editable>
+  <div class="secbar" aria-hidden="true"><span><b>01</b>โจทย์และ Requirement</span><span class="on"><b>02</b>ฮาร์ดแวร์และชุดทดลอง</span><span><b>03</b>แบบจำลองและพารามิเตอร์</span><span><b>04</b>ออกแบบและจูน PI</span><span><b>05</b>ทดสอบตาม V-Model</span><span><b>06</b>สรุปผลและทีม</span></div>
+  <div class="hdr"><div class="kicker">Simulink Model · Real / ControlCore</div><div class="title">ภายใน ControlCore: Error → PI → PWM</div></div>
+  <div class="rule"></div>
+  <div class="body sm-core">
+    <div class="card sm-core-main">
+      <div class="sm-imagehead">Real / ControlCore <span>คลิกภาพเพื่อเปิดขนาดเต็ม</span></div>
+      <a href="assets/simulink/controlcore.png" target="_blank" rel="noopener" class="sm-core-image"><img src="assets/simulink/controlcore.png" alt="ControlCore จริง: SP ลบ PV ส่งเข้า PI_Enable และ MATLAB Function ออกเป็น pwm_out โดย ALLOW ต่อเข้า Enable port"></a>
+      <div class="sm-core-flow"><span>SP − PV</span><b>→</b><span>PI_Enable</span><b>→</b><span>MATLAB Function</span><b>→</b><span>PWM</span></div>
+    </div>
+    <div class="sm-core-side">
+      <div class="card sm-pi-card">
+        <h3>ภายใน PI_Enable</h3>
+        <a href="assets/simulink/pi_enable.png" target="_blank" rel="noopener"><img src="assets/simulink/pi_enable.png" alt="ภายใน PI_Enable ใช้ Discrete PI พร้อม Enable port ชื่อ RUN"></a>
+        <div class="sm-gains"><span>Kp <b>0.90</b></span><span>Ki <b>0.011</b></span><span>Ts <b>0.2 s</b></span></div>
+        <p class="sm-mini">Forward Euler · Output 0–61.5 · Clamping</p>
+      </div>
+      <div class="card sm-pwm-card">
+        <h3>MATLAB Function · PWM mapping</h3>
+        <div class="sm-code">PI output &gt; 0:<br>  PWM = min(PI output + 38.5, 100)<br>PI output ≤ 0:<br>  PWM = 0</div>
+      </div>
+    </div>
+    <div class="sm-interlock"><b>ALLOW</b> ควบคุม PI_Enable · สวิตช์ตัด PWM ตาม Interlock อยู่ใน Real Subsystem ชั้นนอก</div>
+  </div>
+  <div class="ftitle">ระบบควบคุมระดับน้ำด้วย PI</div><div class="pg">12 / 36</div>
+  <aside class="notes">เมื่อเปิดเข้าไปใน Real และ ControlCore จะเห็น SP ลบ PV ได้เป็น Error แล้วส่งเข้า PI_Enable ครับ ภายในใช้ PI ที่ Kp 0.90 และ Ki 0.011 ส่วน ALLOW ใช้ Enable การทำงานของ PI จากนั้น MATLAB Function จะนำ PI output ที่มากกว่าศูนย์มาบวก Bias 38.5 และจำกัด PWM ไม่เกิน 100 count ถ้า PI output ไม่เกินศูนย์ PWM จะเป็นศูนย์ครับ ส่วนสวิตช์ตัดคำสั่งปั๊มตาม Interlock อยู่ใน Real ชั้นนอก เมื่อตามบล็อกเหล่านี้ก็จะเห็นการทำงานตรงกับวงควบคุมที่อธิบายไปครับ</aside>
+</section>
+
 
 <!-- =====================================================================
      11 · LAB1–LAB5
@@ -1027,7 +1117,7 @@ table.t tr.grp td { background: var(--tint) !important; font-family: var(--font-
     </div>
   </div>
   <div class="ftitle">ระบบควบคุมระดับน้ำด้วย PI</div>
-  <div class="pg">11 / 34</div>
+  <div class="pg">13 / 36</div>
   <aside class="notes">ก่อนเข้าสู่การหาค่าพารามิเตอร์ ขอสรุปการทดลองอ้างอิง LAB1 เป็นการทดลองวงปิดครั้งแรก ระดับขึ้นไปถึงประมาณ 330 มิลลิเมตร และใช้ LAB1 เป็นชุด Cross-validation ของแบบจำลองเท่านั้น LAB2 ใช้ PI 1.24 กับ 0.0207 Setpoint 0, 200, 150, 125 และ 200 มิลลิเมตร มีข้อมูล 1,802 จุด ใช้สำหรับ fit พารามิเตอร์ของ Plant LAB3 ใช้ PI ชุดเดิม พบ Peak 210.7 มิลลิเมตรที่ Setpoint 200 จึงเป็นที่มาของการปรับจูน PI ด้วย Grid search LAB4 ใช้ PI ใหม่ 0.90 กับ 0.011 Peak ลดลงเหลือ 200.9 มิลลิเมตร แต่ Settling time ช่วงเติมน้ำครั้งแรกเพิ่มเป็น 182 วินาที และ LAB5 ทดลองจำกัดอัตราการลดของ Setpoint ที่ลบ 0.5 มิลลิเมตรต่อวินาที ซึ่งเป็น Ramp ไม่ใช่ Step ค่า RMSE ระหว่างข้อมูลจริงและการจำลองลดลงจาก 2.53 ใน LAB3 เป็น 1.87 มิลลิเมตรใน LAB5 ส่วนการทดสอบถังจริงรุ่นล่าสุดใช้ Setpoint แบบ Step
 [หมายเหตุท้ายสไลด์เดิม — หมายเหตุ] การทดสอบถังจริงรุ่นล่าสุด (เวอร์ชัน 1.48, Run14–17) ใช้ SP แบบ Step ไม่ใช่ Ramp แบบ LAB5</aside>
 </section>
@@ -1064,7 +1154,7 @@ Q_{\mathrm{out}} &amp;= C_o\sqrt{h}\\[6pt]
     </table>
   </div>
   <div class="ftitle">ระบบควบคุมระดับน้ำด้วย PI</div>
-  <div class="pg">12 / 34</div>
+  <div class="pg">14 / 36</div>
   <aside class="notes">แบบจำลอง Plant อ้างอิงหลัก Mass balance คือ A คูณ dh/dt เท่ากับ Qin ลบ Qout อัตราไหลเข้าขึ้นกับคำสั่งปั๊มหลังผ่าน Motor lag x ซึ่งเขียนในโดเมนเวลาเป็น tau_m คูณ dx/dt บวก x เท่ากับ u หรือเทียบเท่า Transfer function 1 ส่วน tau_m s บวก 1 โดย tau_m เท่ากับ 1.25 วินาทีเป็นค่าสมมติฐานที่ตรึงไว้ อัตราไหลเข้าลดลงตามระดับน้ำด้วยพจน์ Kh คูณ h และมี Flow offset Q0 อัตราไหลออกแปรผันตามรากที่สองของระดับน้ำตามหลัก Torricelli ตารางด้านขวาระบุหน่วยและที่มา: A ตารางมิลลิเมตร, Co มิลลิเมตรยกกำลังห้าส่วนสองต่อวินาที, Ku ลูกบาศก์มิลลิเมตรต่อวินาทีต่อ count, Kh ตารางมิลลิเมตรต่อวินาที และ Q0 ลูกบาศก์มิลลิเมตรต่อวินาที สไลด์ถัดไปจะแสดงที่มาของแต่ละค่า
 [หมายเหตุท้ายสไลด์เดิม — ลำดับคิด] กำหนดสมการก่อน จึงระบุได้ว่าค่าใดต้องวัด ค่าใดต้องประมาณ และค่าใดเป็นค่าตั้ง/สมมติฐาน</aside>
 </section>
@@ -1094,15 +1184,15 @@ Q_{\mathrm{out}} &amp;= C_o\sqrt{h}\\[6pt]
       <div class="card">
         <h3>C<sub>o</sub> ที่ปรากฏในงานนี้ (คนละรุ่น)</h3>
         <table style="width:100%;font-size:22px;line-height:1.5;border-collapse:collapse;">
-          <tr><td class="nb" style="padding:4px 12px 4px 0;"><b>1,183.47</b></td><td>Drain test (หน้านี้) · ใช้หา K<sub>u</sub> หน้า 14</td></tr>
+          <tr><td class="nb" style="padding:4px 12px 4px 0;"><b>1,183.47</b></td><td>Drain test (หน้านี้) · ใช้หา K<sub>u</sub> หน้า 16</td></tr>
           <tr><td class="nb" style="padding:4px 12px 4px 0;"><b>1,052.77</b></td><td>Initial estimate ที่ใช้หา K<sub>h</sub> และ SIMC</td></tr>
-          <tr><td class="nb" style="padding:4px 12px 4px 0;"><b>1,348.08</b></td><td>หลัง Fit ด้วย LAB2 (หน้า 18)</td></tr>
+          <tr><td class="nb" style="padding:4px 12px 4px 0;"><b>1,348.08</b></td><td>หลัง Fit ด้วย LAB2 (หน้า 20)</td></tr>
         </table>
       </div>
     </div>
   </div>
   <div class="ftitle">ระบบควบคุมระดับน้ำด้วย PI</div>
-  <div class="pg">13 / 34</div>
+  <div class="pg">15 / 36</div>
   <aside class="notes">ค่าแรกคือสัมประสิทธิ์การระบาย Co ได้จาก Drain test โดยหยุดปั๊ม กำหนดระดับเริ่มต้น 200 มิลลิเมตร ปล่อยน้ำผ่านทางออกหลัก และบันทึกเวลาจนระดับลดลงเหลือ 100 มิลลิเมตร ได้ 70 วินาที เมื่อ Qin เท่ากับศูนย์ สมการเหลือ A dh/dt เท่ากับลบ Co รากที่สองของ h เมื่อ integrate ทั้งสองข้างจะได้ Co เท่ากับ 2A คูณผลต่างของรากที่สองของระดับ หารด้วยเวลา แทนค่าได้ประมาณ 1,183 มิลลิเมตรยกกำลังห้าส่วนสองต่อวินาที ในงานนี้มีค่า Co สามค่าซึ่งเป็นคนละรุ่น: 1,183.47 จาก Drain test, 1,052.77 ซึ่งต้นฉบับเรียกว่า Initial estimate และใช้ในการหา Kh และ SIMC และ 1,348.08 หลัง fit ด้วย LAB2
 [หมายเหตุท้ายสไลด์เดิม — ขอบเขต] Qout = Co√h · ค่าจาก Drain test ครั้งเดียวเป็นค่าตั้งต้นสำหรับการ Fit ไม่ใช่ค่าที่ใช้ในแบบจำลองสุดท้าย</aside>
 </section>
@@ -1133,7 +1223,7 @@ Q_{\mathrm{out}} &amp;= C_o\sqrt{h}\\[6pt]
         <h3>K<sub>u</sub> ที่ปรากฏในงานนี้ (คนละรุ่น)</h3>
         <table style="width:100%;font-size:22px;line-height:1.5;border-collapse:collapse;">
           <tr><td class="nb" style="padding:4px 12px 4px 0;"><b>611.04</b></td><td>Fill test (หน้านี้)</td></tr>
-          <tr><td class="nb" style="padding:4px 12px 4px 0;"><b>549.06</b></td><td>ใช้หา K<sub>h</sub> (หน้า 15)</td></tr>
+          <tr><td class="nb" style="padding:4px 12px 4px 0;"><b>549.06</b></td><td>ใช้หา K<sub>h</sub> (หน้า 17)</td></tr>
           <tr><td class="nb" style="padding:4px 12px 4px 0;"><b>536.36</b></td><td>Initial estimate ใน SIMC/ตาราง Fit</td></tr>
           <tr><td class="nb" style="padding:4px 12px 4px 0;"><b>941.22</b></td><td>หลัง Fit LAB2 (มี K<sub>h</sub>, Q<sub>0</sub>)</td></tr>
         </table>
@@ -1141,7 +1231,7 @@ Q_{\mathrm{out}} &amp;= C_o\sqrt{h}\\[6pt]
     </div>
   </div>
   <div class="ftitle">ระบบควบคุมระดับน้ำด้วย PI</div>
-  <div class="pg">14 / 34</div>
+  <div class="pg">16 / 36</div>
   <aside class="notes">ค่าถัดมาคือ Ku ซึ่งเป็นอัตราไหลของปั๊มต่อคำสั่ง PWM หนึ่ง count ได้จาก Fill test โดยสั่ง PWM 100 count ระดับเพิ่มจาก 0 ถึง 129 มิลลิเมตรภายใน 25 วินาที ปริมาณน้ำที่ปั๊มส่งเข้าเท่ากับปริมาณที่สะสมในถังรวมกับปริมาณที่ไหลออกในช่วงเวลาเดียวกัน โดยประมาณอัตราไหลออกเฉลี่ยจาก Co 1,183.47 คูณรากที่สองของระดับเฉลี่ย 64.5 มิลลิเมตร เมื่อหารด้วย PWM จะได้ Ku ประมาณ 611 ลูกบาศก์มิลลิเมตรต่อวินาทีต่อ count โมเดลตั้งต้นนี้ยังไม่มี Kh และ Q0 ในงานนี้ Ku มีสี่ค่าในคนละส่วน คือ 611.04 จาก Fill test, 549.06 ที่ใช้หา Kh, 536.36 ที่ใช้เป็น Initial estimate ใน SIMC และตาราง Fit และ 941.22 หลัง fit ซึ่งมี Kh และ Q0 ร่วมอยู่ในสมการ ข้อสังเกต: 100 count ไม่ได้หมายถึง 100% duty
 [หมายเหตุท้ายสไลด์เดิม — สมมติฐาน] โมเดลปั๊มตั้งต้น Qin ≈ Ku·u ยังไม่มี Kh และ Q0 ของสมการเต็ม และละ Motor lag ในการประมาณขั้นนี้</aside>
 </section>
@@ -1163,16 +1253,16 @@ Q_{\mathrm{out}} &amp;= C_o\sqrt{h}\\[6pt]
       <div style="display:flex;gap:18px;">
         <div class="card kpi" style="flex:1;"><div class="num">55 count</div><div class="lab">u<sub>ss</sub></div></div>
         <div class="card kpi" style="flex:1;"><div class="num">200 mm</div><div class="lab">h<sub>ss</sub></div></div>
-        <div class="card" style="flex:2;"><div class="xs"><b>ค่าที่ใช้แทน:</b> K<sub>u</sub> = 549.06 และ C<sub>o</sub> = 1,052.77 ซึ่งต้นฉบับระบุว่าเป็น Initial estimate จากการทดลองต่างช่วง — <b>ไม่ใช่</b> 611.04 / 1,183.47 ของหน้า 13–14</div></div>
+        <div class="card" style="flex:2;"><div class="xs"><b>ค่าที่ใช้แทน:</b> K<sub>u</sub> = 549.06 และ C<sub>o</sub> = 1,052.77 ซึ่งต้นฉบับระบุว่าเป็น Initial estimate จากการทดลองต่างช่วง — <b>ไม่ใช่</b> 611.04 / 1,183.47 ของหน้า 15–16</div></div>
       </div>
     </div>
     <div style="display:flex;flex-direction:column;gap:18px;">
       <div class="card accent-o kpi"><div class="lab">ผลที่ได้ (ค่าประมาณแรก)</div><div class="num">K<sub>h</sub> ≈ 76.55</div><div class="lab" style="font-size:26px;color:var(--ink);">mm²/s</div></div>
-      <div class="card"><h3>ความหมาย</h3><div class="small">ระดับน้ำเพิ่ม 1 mm → อัตราไหลของปั๊มลดลง K<sub>h</sub> mm³/s</div><div class="small" style="margin-top:12px;">ค่าในแบบจำลองปัจจุบัน <b>K<sub>h</sub> = 18.935 mm²/s</b> ได้จากการ Fit ร่วม (หน้า 17–18)</div></div>
+      <div class="card"><h3>ความหมาย</h3><div class="small">ระดับน้ำเพิ่ม 1 mm → อัตราไหลของปั๊มลดลง K<sub>h</sub> mm³/s</div><div class="small" style="margin-top:12px;">ค่าในแบบจำลองปัจจุบัน <b>K<sub>h</sub> = 18.935 mm²/s</b> ได้จากการ Fit ร่วม (หน้า 19–20)</div></div>
     </div>
   </div>
   <div class="ftitle">ระบบควบคุมระดับน้ำด้วย PI</div>
-  <div class="pg">15 / 34</div>
+  <div class="pg">17 / 36</div>
   <aside class="notes">Kh แสดงว่าอัตราไหลของปั๊มลดลงเท่าใดเมื่อระดับน้ำสูงขึ้น เนื่องจากปั๊มต้องส่งน้ำขึ้นสู่ระดับที่สูงขึ้น ค่านี้หาได้จากสภาวะ Steady state ซึ่งอัตราไหลเข้าเท่ากับอัตราไหลออก โดยสมมติ Q0 เท่ากับศูนย์ในขั้นนี้ ใช้ระดับ 200 มิลลิเมตรและ PWM 55 count แทนค่า ได้ Kh ประมาณ 76.55 ตารางมิลลิเมตรต่อวินาที ค่า Ku 549.06 และ Co 1,052.77 ในสูตรนี้เป็น Initial estimate ที่ต้นฉบับระบุว่ามาจากการทดลองต่างช่วงกัน ซึ่งเป็นคนละค่ากับในสองหน้าก่อน ค่า Kh ที่ใช้ในแบบจำลองปัจจุบันคือ 18.935 ซึ่งได้จากการ fit ร่วมในขั้นตอนถัดไป
 [หมายเหตุท้ายสไลด์เดิม — สมมติฐาน] Q0 = 0 ในการประมาณขั้นนี้ · ใช้จุดสมดุลเพียงจุดเดียว (uss 55 count, hss 200 mm)</aside>
 </section>
@@ -1216,7 +1306,7 @@ K_i &amp;= \frac{K_p}{T_i}\approx 0.020716
     </div>
   </div>
   <div class="ftitle">ระบบควบคุมระดับน้ำด้วย PI</div>
-  <div class="pg">16 / 34</div>
+  <div class="pg">18 / 36</div>
   <aside class="notes">จาก Initial estimate Ku 536.36, Co 1,052.77 และ A 10,000 ตารางมิลลิเมตร ทำ Linearization รอบระดับ 200 มิลลิเมตร ความต้านทานการไหลออก Rh เท่ากับ 2 รากที่สองของ h0 หารด้วย Co ได้ประมาณ 0.02687 วินาทีต่อตารางมิลลิเมตร ค่าคงตัวเวลา tau เท่ากับ A คูณ Rh ประมาณ 268.665 วินาที และอัตราขยาย K เท่ากับ Ku คูณ Rh ประมาณ 14.410 มิลลิเมตรต่อ count จึงได้ First-order model จากนั้นใช้กฎ SIMC ของ Skogestad โดยกำหนด Dead time เท่ากับศูนย์ และเลือกเวลาตอบสนองวงปิด tau_c หรือ lambda เท่ากับ 15 วินาที ได้ Kp ประมาณ 1.24295 count ต่อมิลลิเมตร Ti เท่ากับ min ของ 268.7 กับ 60 คือ 60 วินาที และ Ki ประมาณ 0.020716 count ต่อมิลลิเมตรต่อวินาที ค่าที่ใช้ทดลองจริงคือ 1.24 กับ 0.0207 ใน LAB2 และ LAB3
 ข้อควรระบุ: แบบจำลองนี้ลดรูป ละพจน์ Kh ซึ่งในสมการเต็มช่วงที่ Qin มากกว่าศูนย์ จะทำให้ผลของระดับต่อสมการเชิงเส้นเป็น Kh บวก Co ส่วน 2 รากที่สองของ h0 และละ Q0, Motor lag, Filter และ Saturation ด้วย
 [หมายเหตุท้ายสไลด์เดิม — ขอบเขต] เป็นจุดเริ่มต้นการออกแบบ ทวนสอบกับระบบจริงใน LAB3 แล้วจึงจูนใหม่ด้วย Grid search บนแบบจำลองที่ Fit แล้ว</aside>
@@ -1266,7 +1356,7 @@ K_i &amp;= \frac{K_p}{T_i}\approx 0.020716
     </div>
   </div>
   <div class="ftitle">ระบบควบคุมระดับน้ำด้วย PI</div>
-  <div class="pg">17 / 34</div>
+  <div class="pg">19 / 36</div>
   <aside class="notes">เมื่อป้อน PWM ที่วัดได้จากการทดลองวงปิดให้กับแบบจำลองตั้งต้น ระดับที่จำลองได้มี RMSE 18.09 มิลลิเมตรเทียบกับข้อมูลจริง จึงเพิ่มพจน์ Q0 ในสมการ และประมาณค่า Ku, Kh, Co, Q0 และระดับเริ่มต้นร่วมกันด้วย lsqnonlin ใน MATLAB แบบ Nonlinear grey-box output-error [กด → ทีละขั้น] ป้อน PWM ที่วัดได้เข้าแบบจำลอง จำลองระดับน้ำด้วย RK2 คำนวณ Residual เทียบกับระดับจริง แล้วให้ lsqnonlin ปรับพารามิเตอร์ให้ผลรวมกำลังสองของ Residual ต่ำที่สุด วนซ้ำจนลู่เข้า ทดสอบ 5 โครงสร้างแบบจำลองร่วมกับ Initial guess 3 ชุด และกำหนด Parameter bounds ค่าที่ตรึงคือ A, tau_m 1.25 วินาที และ tau_s 3.9 วินาที
 เรื่อง tau_s กับ Filter: tau_s เป็นค่าที่ตรึงไว้ในแบบจำลองที่ใช้ fit ส่วน Filter 0.2/0.8 เป็น Filter แบบ Discrete บน Arduino ที่สร้าง PV สำหรับป้อนกลับ ซึ่งมีค่าคงตัวเวลาเทียบเท่าประมาณ 0.9 วินาที สองค่านี้จึงไม่ใช่ตัวเดียวกัน
 [หมายเหตุท้ายสไลด์เดิม — ข้อมูล] ใช้ LAB2 ช่วง 20–360.2 s ที่ Ts 0.2 s</aside>
@@ -1298,9 +1388,9 @@ K_i &amp;= \frac{K_p}{T_i}\approx 0.020716
     </div>
   </div>
   <div class="ftitle">ระบบควบคุมระดับน้ำด้วย PI</div>
-  <div class="pg">18 / 34</div>
+  <div class="pg">20 / 36</div>
   <aside class="notes">ผลการ fit ได้ Ku 941.22 ลูกบาศก์มิลลิเมตรต่อวินาทีต่อ count, Kh 18.935 ตารางมิลลิเมตรต่อวินาที, Co 1,348.08 และ Q0 28,265 ลูกบาศก์มิลลิเมตรต่อวินาที เราประเมินสามแบบซึ่งไม่ควรนำมาปนกัน แบบแรก Open-loop replay ป้อน PWM ชุดเดิมที่วัดได้ RMSE ลดลงจาก 18.09 เหลือ 3.07 มิลลิเมตร แบบที่สอง Closed-loop comparison ให้แบบจำลองคำนวณ PWM เองด้วย PI ชุดเดิม ได้ RMSE 2.62 มิลลิเมตร เทียบกับ 9.61 มิลลิเมตรของแบบจำลองเดิม ซึ่งคือกราฟด้านซ้าย แผงบนเป็นระดับ แผงล่างเป็นผลต่างแบบจำลองลบค่าจริง แบบที่สาม Cross-validation กับ LAB1 ได้ RMSE 11 มิลลิเมตร ข้อควรระวังคือค่าเหล่านี้เป็น Effective parameters ที่แม่นยำที่สุดในช่วงประมาณ 125 ถึง 200 มิลลิเมตร และช่วงที่สูงกว่า 220 มิลลิเมตรยังมีความคลาดเคลื่อนสูง ในกราฟต้นฉบับนี้ ระดับจริงเป็นสีส้ม ซึ่งต่างจากสีที่ใช้ในกราฟถังจริงชุดหลัง เราไม่ได้เปลี่ยนสีเพราะไม่มีข้อมูลดิบ
-[หมายเหตุท้ายสไลด์เดิม — ขอบเขต] Effective parameters แม่นที่สุดช่วง 125–200 mm · ช่วง > 220 mm ยังคลาดเคลื่อนสูง · Kh 76.55 ในคอลัมน์ Initial คำนวณจาก Ku 549.06 (หน้า 15)</aside>
+[หมายเหตุท้ายสไลด์เดิม — ขอบเขต] Effective parameters แม่นที่สุดช่วง 125–200 mm · ช่วง > 220 mm ยังคลาดเคลื่อนสูง · Kh 76.55 ในคอลัมน์ Initial คำนวณจาก Ku 549.06 (หน้า 17)</aside>
 </section>
 
 <!-- =====================================================================
@@ -1349,7 +1439,7 @@ K_i &amp;= \frac{K_p}{T_i}\approx 0.020716
     </div>
   </div>
   <div class="ftitle">ระบบควบคุมระดับน้ำด้วย PI</div>
-  <div class="pg">19 / 34</div>
+  <div class="pg">21 / 36</div>
   <aside class="notes">PI ชุดแรกใน LAB3 ทำให้เกิด Peak 210.7 มิลลิเมตรที่ Setpoint 200 จึงใช้แบบจำลองที่ fit แล้วทำ Grid search ด้วย Python เริ่มจาก Coarse grid 570 ชุด และ Fine grid 875 คู่ เกณฑ์คัดเลือกใน Simulation คือ Overshoot ไม่เกิน 2 มิลลิเมตร Settling time ไม่เกิน 180 วินาที และ Tail MAE ไม่เกิน 1 มิลลิเมตร ซึ่งเป็นเกณฑ์ค้นหา ไม่ใช่เกณฑ์ตัดสิน Requirement ใช้ Cost function J ได้ Kp 0.90 และ Ki 0.011 และทดสอบ Sensitivity เพิ่มเติม 9 กรณี จากนั้นกำหนดขีดจำกัดเอาต์พุต PI ที่ 61.5 เพื่อให้รวมกับ Bias 38.5 แล้วเท่ากับ 100 count ทำให้ Anti-windup ใช้ขีดจำกัดเดียวกับ Actuator ผลจริง: LAB4 Peak 200.9 มิลลิเมตร และ Settling time ช่วงเติมน้ำครั้งแรก 182 วินาที เทียบกับ LAB3 ที่ 56.6 วินาที ทั้งนี้ LAB3 และ LAB4 เป็นคนละ Run จึงอ่านเป็นแนวโน้ม ไม่ใช่การเปรียบเทียบคู่ทดสอบเดียวกัน
 [หมายเหตุท้ายสไลด์เดิม — หน่วย] Error เป็น mm และเอาต์พุตเป็น PWM count จึงใช้ Kp เป็น count/mm และ Ki เป็น count/(mm·s)</aside>
 </section>
@@ -1381,9 +1471,9 @@ K_i &amp;= \frac{K_p}{T_i}\approx 0.020716
     </div>
   </div>
   <div class="ftitle">ระบบควบคุมระดับน้ำด้วย PI</div>
-  <div class="pg">20 / 34</div>
+  <div class="pg">22 / 36</div>
   <aside class="notes">การทวนสอบเริ่มจาก MIL ซึ่งเป็นการจำลองทั้งหมด โดยรันใหม่ให้เงื่อนไขตรงกับฮาร์ดแวร์เวอร์ชันล่าสุด คือ Setpoint ขาลงแบบ Step และ Filter 0.2 กับ 0.8 ขณะที่ PI และ Plant คงเดิม ทดสอบ 18 กรณี ประกอบด้วย Step ขึ้น 25 มิลลิเมตร 8 กรณี Step ลง 8 กรณี และเต็มช่วงอีก 2 กรณี คำนวณตัวชี้วัดด้วยนิยามเดียวกับการทดสอบถังจริง ผลคือผ่านเกณฑ์ครบ 18 กรณี Overshoot สูงสุดร้อยละ 0.48 และ Settling time สูงสุด 181.2 วินาทีในกรณี 300 ไป 100 มิลลิเมตร ดังกราฟ ซึ่งแสดงช่วงหลังเปลี่ยน Setpoint ที่เวลา 300 วินาที เส้นประสีส้มคือจุดที่ 300 บวก 181.2 วินาที
-[หมายเหตุท้ายสไลด์เดิม — ขอบเขต] ผลจำลองทั้งหมด — แบบจำลองแม่นที่สุดช่วง 125–200 mm จึงไม่แทนผลถังจริงที่ 100 mm (หน้า 26)</aside>
+[หมายเหตุท้ายสไลด์เดิม — ขอบเขต] ผลจำลองทั้งหมด — แบบจำลองแม่นที่สุดช่วง 125–200 mm จึงไม่แทนผลถังจริงที่ 100 mm (หน้า 28)</aside>
 </section>
 
 <!-- =====================================================================
@@ -1405,7 +1495,7 @@ K_i &amp;= \frac{K_p}{T_i}\approx 0.020716
     </div>
   </div>
   <div class="ftitle">ระบบควบคุมระดับน้ำด้วย PI</div>
-  <div class="pg">21 / 34</div>
+  <div class="pg">23 / 36</div>
   <aside class="notes">ขั้น SIL เป็นการ Generate C code จากโมเดล Simulink แล้วรันบนคอมพิวเตอร์ เพื่อเปรียบเทียบกับการรันโมเดลแบบปกติด้วยวิธี Back-to-back test ทดสอบ 6 sessions เปรียบเทียบ 13 คู่สัญญาณ รายงานรวม 31,463 samples ค่าความต่างสูงสุดและ RMSE เท่ากับศูนย์ทุกคู่ โดยกำหนด Tolerance 1 คูณ 10 ยกกำลังลบ 6 กราฟคือกรณี C1 ซึ่งเส้นทึบและเส้นประซ้อนทับกันทั้งหมด รหัสกรณี R1–R3 และ C1–C3 ของ SIL เป็นรหัสกรณีทดสอบ ไม่ใช่ Requirement ผลนี้ยืนยันความสอดคล้องของโค้ดกับโมเดลในขอบเขตที่ทดสอบ แต่ยังไม่ครอบคลุมฮาร์ดแวร์และ Timing
 [หมายเหตุท้ายสไลด์เดิม — ขอบเขต] ยืนยันความสอดคล้องของโค้ดกับโมเดลในชุดทดสอบนี้ ยังไม่ครอบคลุม Hardware และ Timing (เป็นขอบเขตของ PIL)</aside>
 </section>
@@ -1438,7 +1528,7 @@ K_i &amp;= \frac{K_p}{T_i}\approx 0.020716
     </div>
   </div>
   <div class="ftitle">ระบบควบคุมระดับน้ำด้วย PI</div>
-  <div class="pg">22 / 34</div>
+  <div class="pg">24 / 36</div>
   <aside class="notes">PIL คือการนำโค้ดส่วน ControlCore ไปรันบน Arduino Mega จริงโดยใช้ Synthetic input ยังไม่เชื่อมต่อเซนเซอร์หรือปั๊ม ทดสอบ 3 กรณี รวม 1,453 samples ได้แก่ Error เป็นศูนย์ บวก และลบ, PWM saturation และ recovery และการหยุดแล้วเริ่มใหม่ด้วยสัญญาณ ALLOW ความต่างของ PWM สูงสุดประมาณ 2.4 คูณ 10 ยกกำลังลบ 5 count เนื่องจากชนิด double บน ATmega2560 มีขนาด 32 บิตเท่ากับ float ใช้ Tolerance ที่ครึ่งหนึ่งของ PWM resolution คือ 0.5 count ด้าน Timing ControlCore มี Execution time สูงสุดที่วัดได้ 124 ไมโครวินาทีในกรณีที่ทดสอบ คิดเป็นร้อยละ 0.062 ของ Sample period 200 มิลลิวินาที ตัวเลขนี้ไม่ใช่ CPU utilization ของ Firmware ทั้งระบบ และไม่ใช่ Worst-case execution time ที่พิสูจน์แล้ว</aside>
 </section>
 
@@ -1466,7 +1556,7 @@ K_i &amp;= \frac{K_p}{T_i}\approx 0.020716
     </div>
   </div>
   <div class="ftitle">ระบบควบคุมระดับน้ำด้วย PI</div>
-  <div class="pg">23 / 34</div>
+  <div class="pg">25 / 36</div>
   <aside class="notes">การทดสอบกับถังน้ำจริงคือ Arduino Mega เชื่อมต่อเซนเซอร์ ปั๊ม และถังน้ำจริง โดยไม่มี Plant จำลองในวง คอมพิวเตอร์เชื่อมต่อผ่าน External Mode เพื่อบันทึกข้อมูล และใช้โมเดลเวอร์ชันเดียวกันทุก Run กราฟซ้ายคือ Run14 Step ขึ้นจาก 100 ถึง 300 มิลลิเมตร ทีละ 25 มิลลิเมตร กราฟขวาคือ Run16 Step ลงจาก 300 ถึง 100 มิลลิเมตร ทุกกรณีมี Overshoot และ Undershoot ไม่เกินร้อยละ 10 ของ Setpoint ปลายทาง Undershoot สูงสุดร้อยละ 9.65 จาก PV ที่ Setpoint 100 หรือร้อยละ 10 พอดีถ้าใช้ค่าอ่านจากสเกล 90 มิลลิเมตร และ Steady-state error จากการอ่านสเกลสูงสุด 3 มิลลิเมตรที่ Setpoint 175 ค่าสเกลอ่านด้วยสายตาและไม่ได้จับเวลาคู่กับ PV ข้อสังเกตเพิ่ม: Run14 คงระดับไม่น้อยกว่า 240 วินาทีได้ 8 จาก 9 ระดับ ระดับ 300 คงไว้ 232 วินาที
 [หมายเหตุท้ายสไลด์เดิม — แหล่งข้อมูล] Run14/Run16, 30 ต.ค. · โมเดลเวอร์ชัน 1.48 · Mega + VL53L0X + ปั๊ม + ถังจริง</aside>
 </section>
@@ -1496,7 +1586,7 @@ K_i &amp;= \frac{K_p}{T_i}\approx 0.020716
     </table>
   </div>
   <div class="ftitle">ระบบควบคุมระดับน้ำด้วย PI</div>
-  <div class="pg">24 / 34</div>
+  <div class="pg">26 / 36</div>
   <aside class="notes">สไลด์นี้แสดงกรณีที่ใกล้ขีดจำกัดของเกณฑ์ คือ Step ลงสู่ 100 มิลลิเมตร กรณี 125 ไป 100 การทดสอบครั้งแรกใน Run16 PV ต่ำสุด 90.35 มิลลิเมตร คิดเป็น Undershoot ร้อยละ 9.65 ส่วนค่าอ่านจากสเกลต่ำสุด 90 มิลลิเมตร เท่ากับร้อยละ 10 ซึ่งเท่ากับขีดจำกัดพอดี การทดสอบซ้ำใน Run17 PV ต่ำสุด 92.94 มิลลิเมตร หรือร้อยละ 7.06 และสเกล 92 มิลลิเมตร หรือร้อยละ 8 เรารายงานทั้งสองครั้ง ค่าสเกลกับ PV ไม่ได้วัดพร้อมกันจึงไม่ควรอ่านเป็นคู่
 [หมายเหตุท้ายสไลด์เดิม — หมายเหตุ] ค่าสเกลอ่านด้วยสายตา ไม่ได้ synchronize กับ PV จึงไม่ใช่คู่ข้อมูลที่วัดพร้อมกัน · Run16/Run17, 30 ต.ค. · รายงานทั้งครั้งแรกและครั้งซ้ำ</aside>
 </section>
@@ -1520,7 +1610,7 @@ K_i &amp;= \frac{K_p}{T_i}\approx 0.020716
     </div>
   </div>
   <div class="ftitle">ระบบควบคุมระดับน้ำด้วย PI</div>
-  <div class="pg">25 / 34</div>
+  <div class="pg">27 / 36</div>
   <aside class="notes">กรณี 300 ไป 100 มี Settling time 223.6 วินาที ผ่านเกณฑ์ไม่เกิน 250 วินาที ระดับลดลงถึงประมาณ 100 มิลลิเมตรในราว 100 วินาที จากนั้น PI นำระดับกลับเข้าแถบอย่างช้าเนื่องจาก Ki มีค่าต่ำ เรื่องการหยุดปั๊ม ข้อมูลที่บันทึกแสดงว่าคำสั่ง PWM เป็นศูนย์ภายในหนึ่ง Sample time หลังยืนยัน Setpoint ที่ต่ำกว่า แต่ยังไม่ได้วัดว่าปั๊มหรือการไหลหยุดจริงภายในเวลาเท่าใด
 [หมายเหตุท้ายสไลด์เดิม — หมายเหตุ] Run17, 30 ต.ค.</aside>
 </section>
@@ -1546,7 +1636,7 @@ K_i &amp;= \frac{K_p}{T_i}\approx 0.020716
     </div>
   </div>
   <div class="ftitle">ระบบควบคุมระดับน้ำด้วย PI</div>
-  <div class="pg">26 / 34</div>
+  <div class="pg">28 / 36</div>
   <aside class="notes">เมื่อใช้นิยามเดียวกัน ผลจากการจำลองและถังจริงเปรียบเทียบกันได้ แต่ต้องดูแหล่งวัดของแต่ละค่า ทั้งสองชุดผ่านเกณฑ์ ความแตกต่างที่ชัดที่สุดคือ Step ลงสู่ 100 มิลลิเมตร แบบจำลองไม่เกิด Undershoot ขณะที่ถังจริงเกิด Undershoot ร้อยละ 9.65 และร้อยละ 7.06 ในการทดสอบซ้ำ นอกจากนี้ Settling time ของกรณี 300 ไป 100 ในถังจริงนานกว่าการจำลองประมาณ 42 วินาที สาเหตุที่เป็นไปได้ ซึ่งยังเป็นสมมติฐานที่ยังไม่ได้ทดสอบ คือแบบจำลองถูก fit ในช่วง 125 ถึง 200 มิลลิเมตร และไม่ได้รวม Disturbance และ Noise จากผิวน้ำ Steady-state error ทั้งสองฝั่งมาจากคนละแหล่งวัด จึงไม่ควรเทียบตรง ๆ เราใช้ผลถังจริงในการตัดสิน และนำความแตกต่างนี้ไปปรับปรุงแบบจำลอง
 [หมายเหตุท้ายสไลด์เดิม — งานต่อ] นำความแตกต่างที่ 100 mm ไปปรับแบบจำลองช่วงระดับต่ำ</aside>
 </section>
@@ -1568,7 +1658,7 @@ K_i &amp;= \frac{K_p}{T_i}\approx 0.020716
     </div>
   </div>
   <div class="ftitle">ระบบควบคุมระดับน้ำด้วย PI</div>
-  <div class="pg">27 / 34</div>
+  <div class="pg">29 / 36</div>
   <aside class="notes">PIL พิสูจน์ว่าการคำนวณของ ControlCore บนบอร์ดจริงตรงกับโมเดล แต่ใช้ Synthetic input จึงไม่มีเซนเซอร์ ปั๊ม และผิวน้ำในวง ความแตกต่างกับระบบจริงแบ่งเป็นสี่ด้าน Resolution: ระยะจากเซนเซอร์มีความละเอียด 1 มิลลิเมตร และ PWM ถูกปัดเป็นจำนวนเต็ม 1 count ต้นฉบับระบุว่าเท่ากับประมาณร้อยละ 0.392 ของ duty ซึ่งคือ 1 ส่วน 255 Accuracy: PV เป็นค่าเซนเซอร์หลัง Filter ไม่ใช่การวัดอิสระ และค่าสเกลอ่านด้วยสายตาโดยไม่ได้จับเวลาคู่ Noise: ส่วนเบี่ยงเบนมาตรฐานก่อน Filter 1.47 ถึง 1.85 มิลลิเมตร หลัง Filter 0.38 ถึง 0.81 มิลลิเมตร จาก 150 จุดท้ายของ 18 ช่วงใน Run14 และ Run16 ซึ่งรวมความแปรปรวนของผิวน้ำด้วย Delay: Sample time 0.2 วินาที และ Filter มี Group delay ประมาณ 0.8 วินาที ไม่ควรเทียบผลต่าง PWM หน่วย count กับความคลาดเคลื่อนระดับหน่วยมิลลิเมตรโดยตรง
 [หมายเหตุท้ายสไลด์เดิม — สรุป] ปัจจัยเหล่านี้สอดคล้องกับการแกว่งระดับมิลลิเมตรในถังจริง ขณะที่ PIL ต่างกันระดับ 10−5 count — เป็นคำอธิบายเชิงคุณภาพ ยังไม่ได้แยกผลเชิงปริมาณ</aside>
 </section>
@@ -1591,10 +1681,10 @@ K_i &amp;= \frac{K_p}{T_i}\approx 0.020716
       <tr><td>HIGH LEVEL</td><td>ระดับ<b>ก่อน Filter</b> (h<sub>m</sub>) ≥ 310 mm</td><td>0 · กลับเมื่อ &lt; 310 mm</td></tr>
     </table>
     <div class="card accent" style="padding:14px 20px;"><h3>R7 · Safety interlock</h3><ul class="pts xs"><li><b>LCD แสดง Fault:</b> ภาพ SENSOR FAULT / HIGH LEVEL (Fault สร้างโดยยก/เอียงฝาเซนเซอร์) · วิดีโอช่วง ≈ 7:15 จอแสดง HIGH LEVEL เมื่อระดับเกิน 310 mm</li><li><b>PWM = 0:</b> Logic ALLOW ในโมเดล · PIL-R3 บน Mega: ALLOW = 0 → PWM = 0</li></ul></div>
-    <div class="card accent-o" style="padding:14px 20px;"><h3>R8 · Standalone</h3><ul class="pts o xs"><li>วิดีโอช่วง ≈ 3:00: สาธิตแบบไม่เชื่อมต่อคอมพิวเตอร์ ใช้แหล่งจ่ายไฟอย่างเดียว</li><li>PDF: LCD และระดับน้ำขณะ READY/RUN ทุก SP (หน้าถัดไป)</li></ul><div style="display:flex;gap:10px;margin-top:8px;"><a class="sbtn" href="#33">▶ วิดีโอ</a><a class="sbtn ghost" href="assets/documents/pv-vs-ruler-standalone.pdf" target="_blank" rel="noopener">เปิด PDF</a></div></div>
+    <div class="card accent-o" style="padding:14px 20px;"><h3>R8 · Standalone</h3><ul class="pts o xs"><li>วิดีโอช่วง ≈ 3:00: สาธิตแบบไม่เชื่อมต่อคอมพิวเตอร์ ใช้แหล่งจ่ายไฟอย่างเดียว</li><li>PDF: LCD และระดับน้ำขณะ READY/RUN ทุก SP (หน้าถัดไป)</li></ul><div style="display:flex;gap:10px;margin-top:8px;"><a class="sbtn" href="#35">▶ วิดีโอ</a><a class="sbtn ghost" href="assets/documents/pv-vs-ruler-standalone.pdf" target="_blank" rel="noopener">เปิด PDF</a></div></div>
   </div>
   <div class="ftitle">ระบบควบคุมระดับน้ำด้วย PI</div>
-  <div class="pg">28 / 34</div>
+  <div class="pg">30 / 36</div>
   <aside class="notes">กล่องควบคุมแสดง Setpoint ระดับน้ำ และสถานะบนจอ LCD ได้แก่ READY ขณะรอการกด Start, RUN ขณะควบคุม และสถานะ Fault สองแบบ คือ SENSOR FAULT เมื่อระยะที่วัดได้อยู่นอกช่วง 0 ถึง 500 มิลลิเมตร และ HIGH LEVEL เมื่อระดับก่อน Filter ตั้งแต่ 310 มิลลิเมตรขึ้นไป ใช้ค่าก่อน Filter เพื่อไม่ให้ Group delay ของ Filter ทำให้ตรวจจับช้า ทั้งสองกรณีกำหนด PWM เป็นศูนย์ผ่านเงื่อนไข ALLOW
 R7 แยกหลักฐานสองส่วน: ส่วนแรกคือจอ LCD แสดงสถานะ Fault ทั้งในภาพนิ่งและในวิดีโอช่วงประมาณนาทีที่ 7:15 ที่ระดับน้ำเกิน 310 มิลลิเมตร ส่วนที่สองคือคำสั่ง PWM เป็นศูนย์ ซึ่งมาจาก Logic ALLOW ในโมเดล และผล PIL-R3 บนบอร์ด Mega ที่ ALLOW เป็นศูนย์แล้ว PWM เป็นศูนย์ ในวิดีโอผู้นำเสนอระบุว่าปั๊มหยุดทำงาน
 R8 อ้างอิงวิดีโอช่วงประมาณนาทีที่ 3:00 ซึ่งสาธิตการทำงานแบบไม่เชื่อมต่อคอมพิวเตอร์ ใช้แหล่งจ่ายไฟอย่างเดียว และ PDF ที่แสดงจอ LCD กับระดับน้ำทุก Setpoint ในหน้าถัดไป</aside>
@@ -1636,7 +1726,7 @@ R8 อ้างอิงวิดีโอช่วงประมาณนา�
     </div>
   </div>
   <div class="ftitle">ระบบควบคุมระดับน้ำด้วย PI</div>
-  <div class="pg">29 / 34</div>
+  <div class="pg">31 / 36</div>
   <aside class="notes">ตารางนี้มาจาก PDF เทียบค่า PV บนจอกับระดับที่อ่านจากไม้บรรทัดข้างถัง แยกแถว READY ซึ่งเป็นสถานะก่อนเริ่มควบคุมออกจากผลขณะ RUN คอลัมน์ PV ลบสเกลแสดงความแม่นของการวัด ส่วนสเกลลบ SP แสดงผลการควบคุม ณ เวลาที่ถ่ายภาพ ค่าสเกลอ่านจากขอบบนของแผ่นลูกลอย มีความคลาดเคลื่อนการอ่านประมาณบวกลบ 3 มิลลิเมตร เป็นภาพนิ่งทีละระดับ จึงไม่ใช้สรุป Settling time หรือ Overshoot</aside>
 </section>
 
@@ -1661,7 +1751,7 @@ R8 อ้างอิงวิดีโอช่วงประมาณนา�
     </table>
   </div>
   <div class="ftitle">ระบบควบคุมระดับน้ำด้วย PI</div>
-  <div class="pg">30 / 34</div>
+  <div class="pg">32 / 36</div>
   <aside class="notes">ตาราง Traceability เชื่อมโยง Requirement แต่ละข้อกับการทดสอบและผล ช่วง Setpoint ทดสอบครบทั้งการจำลองและถังจริง R2 รวมทั้ง Overshoot และ Undershoot ผ่านเกณฑ์ โดยกรณีลดระดับสู่ 100 มิลลิเมตรใกล้ขีดจำกัด คือ PV ร้อยละ 9.65 และสเกลร้อยละ 10 R3 Settling time สูงสุด 223.6 วินาที ผ่านเกณฑ์ไม่เกิน 250 วินาที R4 Steady-state error จากสเกลสูงสุด 3 มิลลิเมตร R5 ผ่านทั้ง SIL และ PIL R6 Execution time สูงสุดที่วัดได้ต่ำกว่า Sample time มาก แต่ไม่ใช่ Worst case R7 หลักฐานแยกเป็นจอ LCD แสดง Fault กับคำสั่ง PWM เป็นศูนย์จาก Logic ALLOW และ PIL-R3 R8 อ้างอิงวิดีโอ Standalone ที่ไม่เชื่อมต่อคอมพิวเตอร์และ PDF
 [หมายเหตุท้ายสไลด์เดิม — หมายเหตุ] MIL ประเมินด้วยนิยามเดียวกับถังจริง · รหัสกรณี SIL/PIL ไม่ใช่ R1–R8</aside>
 </section>
@@ -1679,7 +1769,7 @@ R8 อ้างอิงวิดีโอช่วงประมาณนา�
       <div class="rs-big">8<span>/ 8</span></div>
       <div class="rs-list">
         <div><span class="badge ok"><svg class="ic" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="10" fill="#fff"/><path d="M5.5 10.5l3 3 6-7" fill="none" stroke="#1E7F4A" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>R1–R8 ผ่าน</span></div>
-        <div class="xs muted">R7 · R8 อ้างอิงหลักฐาน Interlock และ Standalone (หน้า 28–29)</div>
+        <div class="xs muted">R7 · R8 อ้างอิงหลักฐาน Interlock และ Standalone (หน้า 30–31)</div>
       </div>
     </div>
     <div class="rs-grid">
@@ -1690,7 +1780,7 @@ R8 อ้างอิงวิดีโอช่วงประมาณนา�
     </div>
   </div>
   <div class="ftitle">ระบบควบคุมระดับน้ำด้วย PI</div>
-  <div class="pg">31 / 34</div>
+  <div class="pg">33 / 36</div>
   <aside class="notes">สรุปจากตาราง Traceability: Requirement ผ่านครบ 8 จาก 8 ข้อ ตัวเลขเด่นจากถังจริง: Undershoot สูงสุดร้อยละ 9.65 จาก PV ในกรณี 125 ไป 100 หรือร้อยละ 10 จากสเกล Settling time สูงสุด 223.6 วินาทีในกรณี 300 ไป 100 ผ่านเกณฑ์ไม่เกิน 250 วินาที และ Steady-state error สูงสุด 3 มิลลิเมตรจากสเกล หรือร้อยละ 1.71 ส่วน ControlCore ใช้เวลาสูงสุดที่วัดได้ 124 ไมโครวินาทีใน PIL ทุกตัวเลขในหน้านี้มาจากตาราง Traceability หน้าก่อน</aside>
 </section>
 
@@ -1728,13 +1818,13 @@ R8 อ้างอิงวิดีโอช่วงประมาณนา�
         <div class="xs muted" style="margin-top:6px;">วันที่จัดชุดไม่ใช่วันที่ทำการทดลอง</div>
       </div>
       <div class="card" style="padding:16px 24px;">
-        <dl class="fb8"><dt>เวอร์ชันสไลด์ออนไลน์</dt><dd>v1.2 · 1 พฤศจิกายน 2026</dd><dt>การเผยแพร่</dt><dd>GitHub Pages (แชร์ลิงก์)</dd></dl>
+        <dl class="fb8"><dt>เวอร์ชันสไลด์ออนไลน์</dt><dd>v1.3 · 3 พฤศจิกายน 2026</dd><dt>การเผยแพร่</dt><dd>GitHub Pages (แชร์ลิงก์)</dd></dl>
         <div class="xs muted" style="margin-top:6px;">เวอร์ชันสไลด์แยกจากเวอร์ชันชุดไฟล์โครงงาน</div>
       </div>
     </div>
   </div>
   <div class="ftitle">ระบบควบคุมระดับน้ำด้วย PI</div>
-  <div class="pg">32 / 34</div>
+  <div class="pg">34 / 36</div>
   <aside class="notes">แผนดำเนินงานเบื้องต้นแบ่งเป็นสี่สัปดาห์ ศึกษาข้อมูลและวางแผนร่วมกันในสัปดาห์ที่ 1 พัฒนาแบบจำลองและโปรแกรมควบคุม และประกอบตรวจสอบฮาร์ดแวร์ในสัปดาห์ที่ 1 ถึง 2 เชื่อมต่อระบบและทดสอบร่วมกันในสัปดาห์ที่ 3 รวบรวมผลและจัดทำรายงานในสัปดาห์ที่ 2 ถึง 4 และจัดทำสไลด์และซ้อมนำเสนอในสัปดาห์ที่ 4 เป็นแผนเบื้องต้น ไม่ใช่บันทึกวันทำงานจริง ไฟล์โครงงานรวมเป็นชุดส่งมอบ WaterLevel_Project_2026-10-31_v1.0.zip จัดชุดวันที่ 31 ตุลาคม 2026 แบ่งเป็นโปรแกรม ฮาร์ดแวร์ และผลการทดลอง ชื่อชุดไฟล์ระบุวันที่และเวอร์ชัน พร้อมรายการไฟล์ต้นทาง</aside>
 </section>
 
@@ -1762,7 +1852,7 @@ R8 อ้างอิงวิดีโอช่วงประมาณนา�
     </div>
   </div>
   <div class="ftitle">ระบบควบคุมระดับน้ำด้วย PI</div>
-  <div class="pg">33 / 34</div>
+  <div class="pg">35 / 36</div>
   <aside class="notes">วิดีโอสาธิตการทำงานจริง ความยาว 7 นาที 48 วินาที กดปุ่มเล่นบนเครื่องเล่น วิดีโอจะหยุดเองเมื่อเปลี่ยนสไลด์ ช่วงประมาณนาทีที่ 3 เป็นการสาธิต Standalone ซึ่งระบบไม่ได้เชื่อมต่อคอมพิวเตอร์และใช้แหล่งจ่ายไฟอย่างเดียว ต่อด้วยการเลือก Setpoint และกด Start พร้อมนาฬิกาจับเวลา และช่วงประมาณนาทีที่ 7:15 สาธิตกรณีระดับน้ำเกิน 310 มิลลิเมตร ที่จอแสดง HIGH LEVEL</aside>
 </section>
 
@@ -1787,7 +1877,7 @@ R8 อ้างอิงวิดีโอช่วงประมาณนา�
     </div>
   </div>
   <div class="ftitle">ระบบควบคุมระดับน้ำด้วย PI</div>
-  <div class="pg">34 / 34</div>
+  <div class="pg">36 / 36</div>
   <aside class="notes">สรุปผลที่มีหลักฐานรองรับ: ในการจำลอง MIL ผ่านทั้ง 18 กรณี และ SIL ให้ผลตรงกับโมเดลทุก Sample ในชุดทดสอบ บนบอร์ด Mega จริง PIL ให้ผลต่าง PWM ไม่เกิน 2.38 คูณ 10 ยกกำลังลบ 5 count และ ControlCore ใช้เวลาสูงสุดที่วัดได้ 124 ไมโครวินาที ในการทดสอบกับถังน้ำจริง R1 ถึง R4 ผ่าน โดย R2 ใกล้ขีดจำกัด และ R3 Settling time 223.6 วินาที ผ่านเกณฑ์ไม่เกิน 250 วินาที R7 Safety interlock และ R8 Standalone ผ่าน รวมผ่านครบ 8 จาก 8 ข้อ ขอบคุณครับ ยินดีตอบคำถาม</aside>
 </section>
 
